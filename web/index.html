@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather</title>
+    <link href="style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script
+    src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+    crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="location">
+        <h1 class="location-zone">Timezone</h1>
+        <h2 class="location-date">Date</h2>
+    </div>
+    <div class="temperature">
+        <div class="temperature-main-info">
+            <h2 class="temperature-degree" onclick="modifyDegreeUnitMeasure()">degrees</h2>
+            <img src="images/cloudy.svg" class="temperature-icon" alt="weather icon">
+        </div>
+        <div class="vertical-line"></div>
+        <div class="temperature-info">
+            <span class="temperature-info-max" onclick="modifyMaxDegreeUnitMeasure()">
+                <span class="temperature-info-value">Max</span>
+                <br>
+                <span class="temperature-info-placeholder">Max temperature</span>
+            </span>
+            <div class="temperature-info-low" onclick="modifyMinDegreeUnitMeasure()">
+                <span class="temperature-info-value">Min</span>
+                <br>
+                <span class="temperature-info-placeholder">Min temperature</span>
+            </div>
+            <div class="temperature-info-wind">
+                <span class="temperature-info-value">Wind</span>
+                <br>
+                <span class="temperature-info-placeholder">Wind</span>
+            </div>
+            <div class="temperature-info-rain">
+                <span class="temperature-info-value">Rain</span>
+                <br>
+                <span class="temperature-info-placeholder">Humidity</span></div>
+            <div class="temperature-info-sunrise">
+                <span class="temperature-info-value">Sunrise</span>
+                <br>
+                <span class="temperature-info-placeholder">Sunrise</span></div>
+            <div class="temperature-info-sunset">
+                <span class="temperature-info-value">Sunset</span>
+                <br>
+                <span class="temperature-info-placeholder">Sunset</span>
+            </div>
+        </div>
+    </div>
+    <div class="search">
+        <label class="search-label" for="search-city">Search <i class="fa fa-search"></i></label>
+        <input type="text" id="search-city" onfocus="searchingBarFocus()" onfocusout="searchingBarFocusOut()" placeholder="Search for a city">
+        <button class="search-confirm" onclick="searchCity()" onmouseenter="searchingButtonHover()" onmouseleave="searchingButtonHoverOut()">Ok</button>
+    </div>
+<script src="app.js"></script>
+</body>
+</html>
