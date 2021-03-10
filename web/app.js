@@ -1,5 +1,3 @@
-//let weatherData;
-//let weatherAppState = true;
 let locationZone = document.getElementsByClassName("location-zone");
 let locationDate = document.getElementsByClassName("location-date");
 let temperatureDegree = document.getElementsByClassName("temperature-degree");
@@ -22,39 +20,31 @@ const currentWeatherApi = {
     url: "https://api.openweathermap.org/data/2.5/weather"
 };
 
+function successHandler(data) {
+    window.sessionStorage.setItem("weatherData", JSON.stringify(data));
+    trueState();
+    console.log(data);
+    setWeather(data);
+}
+
+function failureHandler(jqXHR) {
+    if (jqXHR.status == 404)
+        console.log("error 404");
+    else
+        console.log("other error");
+    falseState();
+}
+
 window.addEventListener("load", () => {
     let weatherData = window.sessionStorage.getItem("weatherData");
     let weatherAppState = window.sessionStorage.getItem("weatherAppState");
-    if (weatherAppState === null) {
-        $.get(currentWeatherApi.url, {q: "sydney", appid: currentWeatherApi.key}, data => {
-            window.sessionStorage.setItem("weatherData", JSON.stringify(data));
-            window.sessionStorage.setItem("weatherAppState", JSON.stringify({state: true}));
-            console.log(data);
-            setWeather(data);
-        }).fail(jqXHR => {
-            if (jqXHR.status == 404)
-                console.log("error 404");
-            else
-                console.log("other error");
-            falseState();
-        });
-    }
-    else if (JSON.parse(weatherAppState).state === true) {
-        $.get(currentWeatherApi.url, {q: JSON.parse(weatherData).name, appid: currentWeatherApi.key}, data => {
-            window.sessionStorage.setItem("weatherData", JSON.stringify(data));
-            console.log(data);
-            setWeather(data);
-        }).fail(jqXHR => {
-            if (jqXHR.status == 404)
-                console.log("error 404");
-            else
-                console.log("other error");
-            falseState();
-        });
-    }
+    if (weatherAppState === null)
+        $.get(currentWeatherApi.url, {q: "sydney", appid: currentWeatherApi.key}, successHandler).fail(failureHandler);
+    else if (JSON.parse(weatherAppState).state === true)
+        $.get(currentWeatherApi.url, {q: JSON.parse(weatherData).name, appid: currentWeatherApi.key}, successHandler).fail(failureHandler);
     else {
-        window.alert("Please insert a city name");
         falseState();
+        window.alert("Please insert a city name");
     }
 });
 
@@ -79,33 +69,24 @@ function setWeather(data) {
 }
 
 function setIcon(icon, iconCode) {
-    if (iconCode === "01d") {
+    if (iconCode === "01d")
         icon[0].src = "images/day.svg";
-    }
-    else if (iconCode === "02d") {
+    else if (iconCode === "02d")
         icon[0].src = "images/cloudy-day-1.svg";
-    }
-    else if (iconCode === "03d" || iconCode === "04d" || iconCode === "03n" || iconCode === "04n") {
+    else if (iconCode === "03d" || iconCode === "04d" || iconCode === "03n" || iconCode === "04n")
         icon[0].src = "images/cloudy.svg";
-    }
-    else if (iconCode === "09d" || iconCode === "09n" || iconCode === "10n") {
+    else if (iconCode === "09d" || iconCode === "09n" || iconCode === "10n")
         icon[0].src = "images/rainy-6.svg";
-    }
-    else if (iconCode === "10d") {
+    else if (iconCode === "10d")
         icon[0].src = "images/rainy-3.svg";
-    }
-    else if (iconCode === "11d" || iconCode === "11n") {
+    else if (iconCode === "11d" || iconCode === "11n")
         icon[0].src = "images/thunder.svg";
-    }
-    else if (iconCode === "13d" || iconCode === "13n") {
+    else if (iconCode === "13d" || iconCode === "13n")
         icon[0].src = "images/snowy-5.svg";
-    }
-    else if (iconCode === "01n") {
+    else if (iconCode === "01n")
         icon[0].src = "images/night.svg";
-    }
-    else if (iconCode === "02n") {
+    else if (iconCode === "02n")
         icon[0].src = "images/cloudy-night-1.svg";
-    }
     else {
         icon[0].src = "images/weather_sunset.svg";
         throw {name: "IllegalIconCode", message: "the icon code cannot be mapped into any icon"}
@@ -121,18 +102,17 @@ function setTemperatureInfo(data, maxTemperature, minTemperature, humidity, wind
     setTemperatureInfoValue(humidity, humidityValue);
     let windSpeedValue = data.wind.speed + "m/s";
     setTemperatureInfoValue(wind, windSpeedValue);
-    let sunriseDate = new Date(0);
-    sunriseDate.setUTCSeconds(data.sys.sunrise);
-    let soughtSunriseDate = calculateUtcDate(data.timezone, sunriseDate.getMinutes(), sunriseDate.getHours(), null);
-    let fixedSunriseTime = fixDateTimeValues(soughtSunriseDate.minutes, soughtSunriseDate.hours, null, null);
-    let sunriseValue = fixedSunriseTime.fixedHours + ":" + fixedSunriseTime.fixedMinutes;
-    setTemperatureInfoValue(sunrise, sunriseValue);
-    let sunsetDate = new Date(0);
-    sunsetDate.setUTCSeconds(data.sys.sunset);
-    let soughtSunsetDate = calculateUtcDate(data.timezone, sunsetDate.getMinutes(), sunsetDate.getHours(), null);
-    let fixSunsetTime = fixDateTimeValues(soughtSunsetDate.minutes, soughtSunsetDate.hours, null, null);
-    let sunsetValue = fixSunsetTime.fixedHours + ":" + fixSunsetTime.fixedMinutes;
-    setTemperatureInfoValue(sunset, sunsetValue);
+    setSunTime(sunrise, data.sys.sunrise, data.timezone);
+    setSunTime(sunset, data.sys.sunset, data.timezone);
+}
+
+function setSunTime(sunInfo, localSunTime, timezone) {
+    let sunTime = new Date(0);
+    sunTime.setUTCSeconds(localSunTime);
+    let soughtSunTime = calculateUtcDate(timezone, sunTime.getMinutes(), sunTime.getHours(), null);
+    let fixedSunTime = fixDateTimeValues(soughtSunTime.minutes, soughtSunTime.hours, null, null);
+    let sunTimeValue = fixedSunTime.fixedHours + ":" + fixedSunTime.fixedMinutes;
+    setTemperatureInfoValue(sunInfo, sunTimeValue);
 }
 
 function setTemperatureInfoValue (temperatureInfo, value) {
@@ -144,24 +124,18 @@ function setTemperatureInfoValue (temperatureInfo, value) {
 }
 
 function degreeConverter(temperatureValue, unitMeasureStart, unitMeasureEnd) {
-    if (unitMeasureStart === "K" && unitMeasureEnd === "C") {
+    if (unitMeasureStart === "K" && unitMeasureEnd === "C")
         temperatureValue = temperatureValue - 273.15;
-    }
-    else if (unitMeasureStart === "K" && unitMeasureEnd === "F") {
+    else if (unitMeasureStart === "K" && unitMeasureEnd === "F")
         temperatureValue = 1.80 * (temperatureValue - 273.15) + 32;
-    }
-    else if (unitMeasureStart === "C" && unitMeasureEnd === "F") {
+    else if (unitMeasureStart === "C" && unitMeasureEnd === "F")
         temperatureValue = (1.80 * temperatureValue) + 32;
-    }
-    else if (unitMeasureStart === "C" && unitMeasureEnd === "K") {
+    else if (unitMeasureStart === "C" && unitMeasureEnd === "K")
         temperatureValue = temperatureValue + 273.15;
-    }
-    else if (unitMeasureStart === "F" && unitMeasureEnd === "C") {
+    else if (unitMeasureStart === "F" && unitMeasureEnd === "C")
         temperatureValue = (temperatureValue - 32) / 1.80;
-    }
-    else if (unitMeasureStart === "F" && unitMeasureEnd === "K") {
+    else if (unitMeasureStart === "F" && unitMeasureEnd === "K")
         temperatureValue = (temperatureValue - 32) / 1.80 + 273.15;
-    }
     else {
         if ((unitMeasureStart !== "C" && unitMeasureStart !== "F" && unitMeasureStart !== "K") ||
             (unitMeasureEnd !== "C" && unitMeasureEnd !== "F" && unitMeasureEnd !== "K")) {
@@ -181,19 +155,17 @@ function setTemperature(temperatureDegree, unitMeasureStart, unitMeasureEnd, tem
         stringTemperatureValue = intValue + "." + decimalValue;
     else
         stringTemperatureValue = intValue;
-    if (unitMeasureEnd === "C") {
+
+    if (unitMeasureEnd === "C")
         temperatureDegree.innerHTML = stringTemperatureValue + "°C";
-    }
-    else if (unitMeasureEnd === "F") {
+    else if (unitMeasureEnd === "F")
         temperatureDegree.innerHTML = stringTemperatureValue + "°F";
-    }
-    else {
+    else
         temperatureDegree.innerHTML = stringTemperatureValue + "K";
-    }
     return temperatureValue;
 }
 
-function setDate(locationDate, delay) {
+function setDate(locationDate, timezone) {
     let currentDate = new Date();
     let currentHour = currentDate.getHours();
     let currentMinutes = currentDate.getMinutes();
@@ -205,12 +177,11 @@ function setDate(locationDate, delay) {
     let soughtDay;
     let soughtMonth;
     let soughtYear;
-    let soughtDate = calculateUtcDate(delay, currentMinutes, currentHour, currentDay);
+    let soughtDate = calculateUtcDate(timezone, currentMinutes, currentHour, currentDay);
     soughtMinutes = soughtDate.minutes;
     soughtHour = soughtDate.hours;
     soughtDay = soughtDate.days;
-    //day/month/year settings
-    //console.log("day/month/year settings");
+    // day/month/year settings
     if (currentMonth === 1) {
         if (soughtDay > 31) {
             soughtDay -= 31;
@@ -227,25 +198,14 @@ function setDate(locationDate, delay) {
             soughtYear = currentYear;
         }
     }
-    else if (currentMonth === 2 && leapMonth(currentYear)) {
-        if (soughtDay > 29) {
-            soughtDay -= 29;
+    else if (currentMonth === 2) {
+        if (soughtDay > 28 && !leapMonth(currentYear)) {
+            soughtDay -= 28;
             soughtMonth = currentMonth + 1;
             soughtYear = currentYear;
         }
-        else if (soughtDay <= 0) {
-            soughtDay = 31 + soughtDay;
-            soughtMonth = currentMonth - 1;
-            soughtYear = currentYear;
-        }
-        else {
-            soughtMonth = currentMonth;
-            soughtYear = currentYear;
-        }
-    }
-    else if (currentMonth === 2 && !leapMonth(currentYear)) {
-        if (soughtDay > 28) {
-            soughtDay -= 28;
+        else if (soughtDay > 29 && leapMonth(currentYear)) {
+            soughtDay -= 29;
             soughtMonth = currentMonth + 1;
             soughtYear = currentYear;
         }
@@ -266,12 +226,10 @@ function setDate(locationDate, delay) {
             soughtYear = currentYear;
         }
         else if (soughtDay <= 0) {
-            if (leapMonth(currentYear)) {
+            if (leapMonth(currentYear))
                 soughtDay = 29 + soughtDay;
-            }
-            else {
+            else
                 soughtDay = 28 + soughtDay;
-            }
             soughtMonth = currentMonth - 1;
             soughtYear = currentYear;
         }
@@ -280,7 +238,7 @@ function setDate(locationDate, delay) {
             soughtYear = currentYear;
         }
     }
-    else if (currentMonth === 4) {
+    else if (currentMonth === 4 || currentMonth === 6 || currentMonth === 9 || currentMonth === 11) {
         if (soughtDay > 30) {
             soughtDay -= 30;
             soughtMonth = currentMonth + 1;
@@ -296,39 +254,7 @@ function setDate(locationDate, delay) {
             soughtYear = currentYear;
         }
     }
-    else if (currentMonth === 5) {
-        if (soughtDay > 31) {
-            soughtDay -= 31;
-            soughtMonth = currentMonth + 1;
-            soughtYear = currentYear;
-        }
-        else if (soughtDay <= 0) {
-            soughtDay = 30 + soughtDay;
-            soughtMonth = currentMonth - 1;
-            soughtYear = currentYear;
-        }
-        else {
-            soughtMonth = currentMonth;
-            soughtYear = currentYear;
-        }
-    }
-    else if (currentMonth === 6) {
-        if (soughtDay > 30) {
-            soughtDay -= 30;
-            soughtMonth = currentMonth + 1;
-            soughtYear = currentYear;
-        }
-        else if (soughtDay <= 0) {
-            soughtDay = 31 + soughtDay;
-            soughtMonth = currentMonth - 1;
-            soughtYear = currentYear;
-        }
-        else {
-            soughtMonth = currentMonth;
-            soughtYear = currentYear;
-        }
-    }
-    else if (currentMonth === 7) {
+    else if (currentMonth === 5 || currentMonth === 7 || currentMonth === 10) {
         if (soughtDay > 31) {
             soughtDay -= 31;
             soughtMonth = currentMonth + 1;
@@ -347,54 +273,6 @@ function setDate(locationDate, delay) {
     else if (currentMonth === 8) {
         if (soughtDay > 31) {
             soughtDay -= 31;
-            soughtMonth = currentMonth + 1;
-            soughtYear = currentYear;
-        }
-        else if (soughtDay <= 0) {
-            soughtDay = 31 + soughtDay;
-            soughtMonth = currentMonth - 1;
-            soughtYear = currentYear;
-        }
-        else {
-            soughtMonth = currentMonth;
-            soughtYear = currentYear;
-        }
-    }
-    else if (currentMonth === 9) {
-        if (soughtDay > 30) {
-            soughtDay -= 30;
-            soughtMonth = currentMonth + 1;
-            soughtYear = currentYear;
-        }
-        else if (soughtDay <= 0) {
-            soughtDay = 31 + soughtDay;
-            soughtMonth = currentMonth - 1;
-            soughtYear = currentYear;
-        }
-        else {
-            soughtMonth = currentMonth;
-            soughtYear = currentYear;
-        }
-    }
-    else if (currentMonth === 10) {
-        if (soughtDay > 31) {
-            soughtDay -= 31;
-            soughtMonth = currentMonth + 1;
-            soughtYear = currentYear;
-        }
-        else if (soughtDay <= 0) {
-            soughtDay = 30 + soughtDay;
-            soughtMonth = currentMonth - 1;
-            soughtYear = currentYear;
-        }
-        else {
-            soughtMonth = currentMonth;
-            soughtYear = currentYear;
-        }
-    }
-    else if (currentMonth === 11) {
-        if (soughtDay > 30) {
-            soughtDay -= 30;
             soughtMonth = currentMonth + 1;
             soughtYear = currentYear;
         }
@@ -503,30 +381,26 @@ function fixDateTimeValues(minutes, hours, days, months) {
     let fixedHours;
     let fixedDays;
     let fixedMonths;
-    if (minutes >= 0 && minutes <= 9) {
+    if (minutes >= 0 && minutes <= 9)
         fixedMinutes = "0" + minutes;
-    }
-    else {
+    else
         fixedMinutes = minutes;
-    }
-    if (hours >= 0 && hours <= 9) {
+
+    if (hours >= 0 && hours <= 9)
         fixedHours = "0" + hours;
-    }
-    else {
+    else
         fixedHours = hours;
-    }
-    if (days !== null && days >= 1 && days <= 9) {
+
+    if (days !== null && days >= 1 && days <= 9)
         fixedDays = "0" + days;
-    }
-    else  {
+    else
         fixedDays = days;
-    }
-    if (months !== null && months >= 1 && months <= 9) {
+
+    if (months !== null && months >= 1 && months <= 9)
         fixedMonths = "0" + months;
-    }
-    else {
+    else
         fixedMonths = months;
-    }
+
     return {
         fixedMinutes: fixedMinutes,
         fixedHours: fixedHours,
@@ -537,89 +411,55 @@ function fixDateTimeValues(minutes, hours, days, months) {
 
 function modifyDegreeUnitMeasure() {
     if (JSON.parse(window.sessionStorage.getItem("weatherAppState")).state === true) {
-        let temperatureString = temperatureDegree[0].innerHTML;
-        let separatorIndex = temperatureString.indexOf("°");
-        let unitMeasureStart;
-        if (separatorIndex !== -1)
-            unitMeasureStart = temperatureString.substring(separatorIndex + 1, temperatureString.length);
-        else
-            unitMeasureStart = "K";
         let maxTemperatureElement = maxTemperature[0].querySelector(".temperature-info-value");
         let minTemperatureElement = minTemperature[0].querySelector(".temperature-info-value");
-        let maxTemperatureString = maxTemperatureElement.innerHTML;
-        separatorIndex = maxTemperatureString.indexOf("°");
-        let maxUnitMeasureStart;
-        if (separatorIndex !== -1)
-            maxUnitMeasureStart = maxTemperatureString.substring(separatorIndex + 1, maxTemperatureString.length);
-        else
-            maxUnitMeasureStart = "K";
-        let minTemperatureString = minTemperatureElement.innerHTML;
-        separatorIndex = minTemperatureString.indexOf("°");
-        let minUnitMeasureStart;
-        if (separatorIndex !== -1)
-            minUnitMeasureStart = minTemperatureString.substring(separatorIndex + 1, minTemperatureString.length);
-        else
-            minUnitMeasureStart = "K";
-        if (unitMeasureStart === "C") {
-            temperatureDegreeValue = setTemperature(temperatureDegree[0], unitMeasureStart, "F", temperatureDegreeValue);
-            if (maxUnitMeasureStart !== "F") {
-                maxTemperatureValue = setTemperature(maxTemperatureElement, maxUnitMeasureStart, "F", maxTemperatureValue);
-            }
-            if (minUnitMeasureStart !== "F") {
-                minTemperatureValue = setTemperature(minTemperatureElement, minUnitMeasureStart, "F", minTemperatureValue);
-            }
-        } else if (unitMeasureStart === "F") {
-            temperatureDegreeValue = setTemperature(temperatureDegree[0], unitMeasureStart, "K", temperatureDegreeValue);
-            if (maxUnitMeasureStart !== "K") {
-                maxTemperatureValue = setTemperature(maxTemperatureElement, maxUnitMeasureStart, "K", maxTemperatureValue);
-            }
-            if (minUnitMeasureStart !== "K") {
-                minTemperatureValue = setTemperature(minTemperatureElement, minUnitMeasureStart, "K", minTemperatureValue);
-            }
-        } else {
-            temperatureDegreeValue = setTemperature(temperatureDegree[0], unitMeasureStart, "C", temperatureDegreeValue);
-            if (maxUnitMeasureStart !== "C") {
-                maxTemperatureValue = setTemperature(maxTemperatureElement, maxUnitMeasureStart, "C", maxTemperatureValue);
-            }
-            if (minUnitMeasureStart !== "C") {
-                minTemperatureValue = setTemperature(minTemperatureElement, minUnitMeasureStart, "C", minTemperatureValue);
-            }
-        }
+        let mainUnitMeasureStart = findUnitMeasureStart(temperatureDegree[0].innerHTML);
+        let mainUnitMeasureEnd = findUnitMeasureEnd(mainUnitMeasureStart);
+        let maxUnitMeasureStart = findUnitMeasureStart(maxTemperatureElement.innerHTML);
+        let minUnitMeasureStart = findUnitMeasureStart(minTemperatureElement.innerHTML);
+        temperatureDegreeValue = setTemperature(temperatureDegree[0], mainUnitMeasureStart, mainUnitMeasureEnd, temperatureDegreeValue);
+        maxTemperatureValue = setTemperature(maxTemperatureElement, maxUnitMeasureStart, mainUnitMeasureEnd, maxTemperatureValue);
+        minTemperatureValue = setTemperature(minTemperatureElement, minUnitMeasureStart, mainUnitMeasureEnd, minTemperatureValue)
     }
+}
+
+function findUnitMeasureStart(temperatureString) {
+    let separatorIndex = temperatureString.indexOf("°");
+    let unitMeasure;
+    if (separatorIndex !== -1)
+        unitMeasure = temperatureString.substring(separatorIndex + 1, temperatureString.length);
+    else
+        unitMeasure = "K";
+    return unitMeasure;
+}
+
+function findUnitMeasureEnd(unitMeasureStart) {
+    let unitMeasureEnd;
+    if (unitMeasureStart === "C")
+        unitMeasureEnd = "F";
+    else if (unitMeasureStart === "F")
+        unitMeasureEnd = "K";
+    else
+        unitMeasureEnd = "C";
+    return unitMeasureEnd;
 }
 
 function modifyMaxDegreeUnitMeasure() {
     if (JSON.parse(window.sessionStorage.getItem("weatherAppState")).state === true) {
         let maxTemperatureElement = maxTemperature[0].querySelector(".temperature-info-value");
-        maxTemperatureValue = modifyMaxMinDegreeUnitMeasure(maxTemperatureElement, maxTemperatureValue);
+        let maxUnitMeasureStart = findUnitMeasureStart(maxTemperatureElement.innerHTML);
+        let maxUnitMeasureEnd = findUnitMeasureEnd(maxUnitMeasureStart);
+        maxTemperatureValue = setTemperature(maxTemperatureElement, maxUnitMeasureStart, maxUnitMeasureEnd, maxTemperatureValue);
     }
 }
 
 function modifyMinDegreeUnitMeasure() {
     if (JSON.parse(window.sessionStorage.getItem("weatherAppState")).state === true) {
         let minTemperatureElement = minTemperature[0].querySelector(".temperature-info-value");
-        minTemperatureValue = modifyMaxMinDegreeUnitMeasure(minTemperatureElement, minTemperatureValue);
+        let minUnitMeasureStart = findUnitMeasureStart(minTemperatureElement.innerHTML);
+        let minUnitMeasureEnd = findUnitMeasureEnd(minUnitMeasureStart);
+        minTemperatureValue = setTemperature(minTemperatureElement, minUnitMeasureStart, minUnitMeasureEnd, minTemperatureValue);
     }
-}
-
-function modifyMaxMinDegreeUnitMeasure(temperatureElement, temperatureValue) {
-    let temperatureString = temperatureElement.innerHTML;
-    let separatorIndex = temperatureString.indexOf("°");
-    let unitMeasureStart;
-    if (separatorIndex !== -1)
-        unitMeasureStart = temperatureString.substring(separatorIndex + 1, temperatureString.length);
-    else
-        unitMeasureStart = "K";
-    if (unitMeasureStart === "C") {
-        temperatureValue = setTemperature(temperatureElement, unitMeasureStart, "F", temperatureValue);
-    }
-    else if (unitMeasureStart === "F") {
-        temperatureValue = setTemperature(temperatureElement, unitMeasureStart, "K", temperatureValue);
-    }
-    else {
-        temperatureValue = setTemperature(temperatureElement, unitMeasureStart, "C", temperatureValue);
-    }
-    return temperatureValue;
 }
 
 function searchCity() {
@@ -646,15 +486,15 @@ function searchCity() {
 }
 
 function trueState() {
-    //searchBar.classList.remove("search-city-false-state");
-    searchBar.style.borderBottom = "3px solid #7D3C98";
-    searchBar.style.boxShadow = "";
-    searchButton[0].style.border = "3px solid #7D3C98";
-    searchButton[0].style.boxShadow = "";
+    searchBar.classList.add("search-city-true-state");
+    searchBar.classList.remove("search-city-false-state");
+    searchButton[0].classList.add("search-confirm-true-state");
+    searchButton[0].classList.remove("search-confirm-false-state");
     window.sessionStorage.setItem("weatherAppState", JSON.stringify({state: true}));
 }
 
 function falseState() {
+    window.sessionStorage.setItem("weatherAppState", JSON.stringify({state: false}));
     locationZone[0].innerHTML = "N/A City";
     locationDate[0].innerHTML = "N/A Date";
     temperatureDegree[0].innerHTML = "N/A Temperature";
@@ -665,40 +505,8 @@ function falseState() {
     sunrise[0].querySelector(".temperature-info-value").innerHTML = "N/A";
     sunset[0].querySelector(".temperature-info-value").innerHTML = "N/A";
     icon[0].src = "images/weather_sunset.svg";
-    //searchBar.classList.add("search-city-false-state");
-    searchBar.style.borderBottom = "3px solid darkred";
-    searchBar.style.boxShadow = "0 0 2px 0px #FFFFFF," +
-                                "0 0 5px 0px #ff9999," +
-                                "0 0 10px 0px #e60000";
-    searchButton[0].style.border = "3px solid darkred";
-    searchButton[0].style.boxShadow = "0 0 2px 0px #FFFFFF," +
-                                    "0 0 5px 0px #ff9999," +
-                                    "0 0 10px 0px #e60000";
-    window.sessionStorage.setItem("weatherAppState", JSON.stringify({state: false}));
-}
-
-function searchingBarFocus() {
-    searchBar.style.boxShadow = "2px 5px 5px rgba(0,0,0,0.6)";
-}
-
-function searchingBarFocusOut() {
-    if (JSON.parse(window.sessionStorage.getItem("weatherAppState")).state === true)
-        searchBar.style.boxShadow = "";
-    else
-        searchBar.style.boxShadow = "0 0 2px 0px #FFFFFF," +
-                                    "0 0 5px 0px #ff9999," +
-                                    "0 0 10px 0px #e60000";
-}
-
-function searchingButtonHover() {
-    searchButton[0].style.boxShadow = "2px 5px 5px rgba(0,0,0,0.6)";
-}
-
-function searchingButtonHoverOut() {
-    if (JSON.parse(window.sessionStorage.getItem("weatherAppState")).state === true)
-        searchButton[0].style.boxShadow = "";
-    else
-        searchButton[0].style.boxShadow =   "0 0 2px 0px #FFFFFF," +
-                                            "0 0 5px 0px #ff9999," +
-                                            "0 0 10px 0px #e60000";
+    searchBar.classList.add("search-city-false-state");
+    searchBar.classList.remove("search-city-true-state");
+    searchButton[0].classList.add("search-confirm-false-state");
+    searchButton[0].classList.remove("search-confirm-true-state");
 }
