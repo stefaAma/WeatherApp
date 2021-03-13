@@ -5,14 +5,68 @@
 }
 
 body {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
     background: linear-gradient(to bottom right, #08f995, #126ce8);
-    /*padding: 2.5vh 5vw;*/
-    align-items: center;
     color: whitesmoke;
     font-family: sans-serif;
+}
+
+.wrap-loader {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.loader {
+    height: 20vh;
+    width: 20vh;
+    border-radius: 50%;
+    border: 16px solid whitesmoke;
+    border-top: 16px solid darkred;
+    box-shadow: 0 -5px 15px rgba(139,0,0,0.6),
+                inset 0 5px 15px rgba(139,0,0,0.5);
+    animation: loader-animation 1.5s linear infinite;
+}
+
+@keyframes loader-animation {
+    0% {
+        transform: rotate(0deg);
+        border-top: 16px solid darkred;
+        box-shadow: 0 -5px 15px rgba(139,0,0,0.6),
+                    inset 0 5px 15px rgba(139,0,0,0.5);
+    }
+    50% {
+        transform: rotate(180deg);
+        border-top: 16px solid #ff8b00;
+        box-shadow: 0 -5px 15px rgba(255,139,0,0.6),
+                    inset 0 5px 15px rgba(255,139,0,0.5);
+    }
+    100% {
+        transform: rotate(360deg);
+        border-top: 16px solid darkred;
+        box-shadow: 0 -5px 15px rgba(139,0,0,0.6),
+                    inset 0 5px 15px rgba(139,0,0,0.5);
+    }
+}
+
+.content {
+    height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    display: none;
+    animation: content-animation 2.5s ease;
+}
+
+@keyframes content-animation {
+    0% {
+        /*transform: translateY(50px);*/
+        opacity: 0;
+    }
+    100% {
+        /*transform: translateY(0px);*/
+        opacity: 1;
+    }
 }
 
 .location {
@@ -63,12 +117,18 @@ body {
     font-size: 7.5vh;
     right: 20%;
     transition: text-shadow 0.5s ease;
-    /*letter-spacing:  2px;*/
 }
 
 .temperature-degree:hover {
-    cursor: pointer;
     text-shadow: 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.temperature-degree-true-state {
+    cursor: pointer;
+}
+
+.temperature-degree-false-state {
+    cursor: text;
 }
 
 .temperature-icon {
@@ -81,11 +141,6 @@ body {
     height: 20vh;
     transition: 0.5s;
 }
-
-/*.temperature-icon:hover {
-    box-shadow: 0 10px 10px -5px rgba(0,0,0,0.6);
-    background-color: transparent;
-}*/
 
 .temperature-info {
     order: 3;
@@ -118,12 +173,26 @@ body {
 
 .temperature-info-max {
     grid-area: max;
+}
+
+.temperature-info-max-true-state {
     cursor: pointer;
+}
+
+.temperature-info-max-false-state {
+    cursor: text;
 }
 
 .temperature-info-low {
     grid-area: min;
+}
+
+.temperature-info-low-true-state {
     cursor: pointer;
+}
+
+.temperature-info-low-false-state {
+    cursor: text;
 }
 
 .temperature-info-rain {
@@ -228,4 +297,16 @@ body {
     box-shadow: 0 0 2px 0 #FFFFFF,
                 0 0 5px 0 #ff9999,
                 0 0 10px 0 #e60000;
+}
+
+.fa-refresh {
+    size: 2.5vh;
+}
+
+.fa-refresh-true-state {
+    cursor: pointer;
+}
+
+.fa-refresh-false-state {
+    cursor: text;
 }

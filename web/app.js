@@ -10,6 +10,8 @@ let sunset = document.getElementsByClassName("temperature-info-sunset");
 let icon = document.getElementsByClassName("temperature-icon");
 let searchBar = document.getElementById("search-city");
 let searchButton = document.getElementsByClassName("search-confirm");
+let content = document.getElementsByClassName("content");
+let wrapLoader = document.getElementsByClassName("wrap-loader");
 
 let temperatureDegreeValue;
 let maxTemperatureValue;
@@ -20,11 +22,17 @@ const currentWeatherApi = {
     url: "https://api.openweathermap.org/data/2.5/weather"
 };
 
+function dismissLoader() {
+    content[0].style.display = "flex";
+    wrapLoader[0].style.display = "none";
+}
+
 function successHandler(data) {
     window.sessionStorage.setItem("weatherData", JSON.stringify(data));
     trueState();
     console.log(data);
     setWeather(data);
+    dismissLoader();
 }
 
 function failureHandler(jqXHR) {
@@ -33,6 +41,7 @@ function failureHandler(jqXHR) {
     else
         console.log("other error");
     falseState();
+    dismissLoader();
 }
 
 window.addEventListener("load", () => {
@@ -43,8 +52,9 @@ window.addEventListener("load", () => {
     else if (JSON.parse(weatherAppState).state === true)
         $.get(currentWeatherApi.url, {q: JSON.parse(weatherData).name, appid: currentWeatherApi.key}, successHandler).fail(failureHandler);
     else {
-        falseState();
         window.alert("Please insert a city name");
+        falseState();
+        dismissLoader();
     }
 });
 
@@ -306,7 +316,7 @@ function setDate(locationDate, timezone) {
         throw {name:"IllegalMonth", message:"month value is not >= 1 and <= 12"}
     }
     let fixedDateTime = fixDateTimeValues(soughtMinutes, soughtHour, soughtDay, soughtMonth);
-    locationDate[0].innerHTML = soughtYear + "/" + fixedDateTime.fixedMonths + "/" + fixedDateTime.fixedDays + " Time " + fixedDateTime.fixedHours + ":" + fixedDateTime.fixedMinutes;
+    locationDate[0].querySelector("span").innerHTML = soughtYear + "/" + fixedDateTime.fixedMonths + "/" + fixedDateTime.fixedDays + " Time " + fixedDateTime.fixedHours + ":" + fixedDateTime.fixedMinutes;
 }
 
 function leapMonth(currentYear) {
@@ -490,13 +500,21 @@ function trueState() {
     searchBar.classList.remove("search-city-false-state");
     searchButton[0].classList.add("search-confirm-true-state");
     searchButton[0].classList.remove("search-confirm-false-state");
+    locationDate[0].querySelector(".fa-refresh").classList.add("fa-refresh-true-state");
+    locationDate[0].querySelector(".fa-refresh").classList.remove("fa-refresh-false-state");
+    temperatureDegree[0].classList.add("temperature-degree-true-state");
+    temperatureDegree[0].classList.remove("temperature-degree-false-state");
+    maxTemperature[0].classList.add("temperature-info-max-true-state");
+    maxTemperature[0].classList.remove("temperature-info-max-false-state");
+    minTemperature[0].classList.add("temperature-info-low-true-state");
+    minTemperature[0].classList.remove("temperature-info-low-false-state");
     window.sessionStorage.setItem("weatherAppState", JSON.stringify({state: true}));
 }
 
 function falseState() {
     window.sessionStorage.setItem("weatherAppState", JSON.stringify({state: false}));
     locationZone[0].innerHTML = "N/A City";
-    locationDate[0].innerHTML = "N/A Date";
+    locationDate[0].querySelector("span").innerHTML = "N/A Date";
     temperatureDegree[0].innerHTML = "N/A Temperature";
     maxTemperature[0].querySelector(".temperature-info-value").innerHTML = "N/A";
     minTemperature[0].querySelector(".temperature-info-value").innerHTML = "N/A";
@@ -509,4 +527,17 @@ function falseState() {
     searchBar.classList.remove("search-city-true-state");
     searchButton[0].classList.add("search-confirm-false-state");
     searchButton[0].classList.remove("search-confirm-true-state");
+    locationDate[0].querySelector(".fa-refresh").classList.add("fa-refresh-false-state");
+    locationDate[0].querySelector(".fa-refresh").classList.remove("fa-refresh-true-state");
+    temperatureDegree[0].classList.add("temperature-degree-false-state");
+    temperatureDegree[0].classList.remove("temperature-degree-true-state");
+    maxTemperature[0].classList.add("temperature-info-max-false-state");
+    maxTemperature[0].classList.remove("temperature-info-max-true-state");
+    minTemperature[0].classList.add("temperature-info-low-false-state");
+    minTemperature[0].classList.remove("temperature-info-low-true-state");
+}
+
+function refresh() {
+    if (JSON.parse(window.sessionStorage.getItem("weatherAppState")).state === true)
+        window.location.reload();
 }
