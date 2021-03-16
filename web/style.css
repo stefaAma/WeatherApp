@@ -15,7 +15,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1;
+    z-index: 2;
 }
 
 .loader {
@@ -309,4 +309,108 @@ body {
 
 .fa-refresh-false-state {
     cursor: text;
+}
+
+.hamburger-btn {
+    height: 6vh;
+    width: 8vh;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.hamburger-btn-open {
+    top: 5%;
+    left: 15%;
+}
+
+.hamburger-btn-closed {
+    top: 7.5%;
+    left: 7.5%;
+}
+
+.hamburger-btn:hover > .hamburger::before, .hamburger-btn:hover > .hamburger::after {
+    box-shadow: 2px 5px 5px rgba(0,0,0,0.6);
+}
+
+.hamburger-btn-closed:hover > .hamburger {
+    box-shadow: 2px 5px 5px rgba(0,0,0,0.6);
+}
+
+.hamburger-btn-open > .hamburger {
+    background-color: transparent;
+}
+
+.hamburger-btn-open > .hamburger::before {
+    transform: rotate(45deg) translate(0, 0);
+}
+
+.hamburger-btn-open > .hamburger::after {
+    transform: rotate(-45deg) translate(0, 0);
+}
+
+.hamburger {
+    height: 1vh;
+    width: 7vh;
+    background-color: whitesmoke;
+    border-radius: 20px;
+    transition: 0.5s ease;
+}
+
+.hamburger::before, .hamburger::after {
+    content: "";
+    position: absolute;
+    height: 1vh;
+    width: 7vh;
+    background-color: whitesmoke;
+    border-radius: 20px;
+    transition: 0.5s ease;
+}
+
+.hamburger::before {
+    transform: translateY(-2vh);
+}
+
+.hamburger::after {
+    transform: translateY(2vh);
+}
+
+.side-menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    background-color: #313131;
+    transition: 0.5s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.side-menu-open {
+    width: 20%;
+    box-shadow: 10px 10px 25px -5px rgba(0,0,0,0.8);
+}
+
+.side-menu-closed {
+    width: 0;
+}
+
+.side-menu-item {
+    font-size: 3vh;
+    text-transform: uppercase;
+    margin-bottom: 2vh;
+    cursor: pointer;
+    overflow: no-display;
+    transition: 0.25s ease;
+    white-space: nowrap;
+}
+
+.side-menu-item:hover {
+    color: lightblue;
 }

@@ -12,6 +12,8 @@ let searchBar = document.getElementById("search-city");
 let searchButton = document.getElementsByClassName("search-confirm");
 let content = document.getElementsByClassName("content");
 let wrapLoader = document.getElementsByClassName("wrap-loader");
+let sideMenu = document.getElementsByClassName("side-menu");
+let hamburgerBtn = document.getElementsByClassName("hamburger-btn");
 
 let temperatureDegreeValue;
 let maxTemperatureValue;
@@ -540,4 +542,17 @@ function falseState() {
 function refresh() {
     if (JSON.parse(window.sessionStorage.getItem("weatherAppState")).state === true)
         window.location.reload();
+}
+
+function openSideMenu() {
+    sideMenu[0].classList.toggle("side-menu-open");
+    sideMenu[0].classList.toggle("side-menu-closed");
+    if (sideMenu[0].classList.contains("side-menu-open")) {
+        hamburgerBtn[0].classList.add("hamburger-btn-open");
+        hamburgerBtn[0].classList.remove("hamburger-btn-closed")
+    }
+    else {
+        hamburgerBtn[0].classList.add("hamburger-btn-closed");
+        hamburgerBtn[0].classList.remove("hamburger-btn-open");
+    }
 }

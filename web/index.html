@@ -11,10 +11,17 @@
     crossorigin="anonymous"></script>
 </head>
 <body>
+    <div class="side-menu side-menu-closed">
+        <span class="side-menu-item">Hourly Forecast</span>
+        <span class="side-menu-item">Daily Forecast</span>
+    </div>
     <div class="wrap-loader">
         <div class="loader"></div>
     </div>
     <div class="content">
+        <div class="hamburger-btn hamburger-btn-closed" onclick="openSideMenu()">
+            <div class="hamburger"></div>
+        </div>
         <div class="location">
             <h1 class="location-zone">Timezone</h1>
             <h2 class="location-date"><span>Date</span> <i class="fa fa-refresh" onclick="refresh()" aria-hidden="true"></i></h2>
