@@ -3,20 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <title>Weather</title>
-    <link href="style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="style.css" rel="stylesheet">
     <script
     src="https://code.jquery.com/jquery-3.4.1.min.js"
     integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
     crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="side-menu side-menu-closed">
-        <span class="side-menu-item">Hourly Forecast</span>
-        <span class="side-menu-item">Daily Forecast</span>
-    </div>
     <div class="wrap-loader">
         <div class="loader"></div>
+    </div>
+    <div class="side-menu side-menu-closed">
+        <span class="side-menu-item" onclick="openSideContent()">Hourly Forecast</span>
+        <span class="side-menu-item">Daily Forecast</span>
+        <span class="side-menu-item side-menu-closing-item" onclick="closeSideContent()">Close Side Content</span>
+    </div>
+    <div class="side-content side-content-close">
+        <i class="fa fa-angle-double-up"></i>
+        <div class="side-content-info">
+            <div class="side-content-info-hourly-forecast">
+                <div class="hourly-forecast-element">
+                    <h3 class="hourly-forecast-time">Time</h3>
+                    <h4 class="hourly-forecast-main-temp">Main Temp</h4>
+                    <div class="hourly-forecast-max-temp">
+                        <span class="hourly-forecast-placeholder">Max-temperature</span>
+                        <span class="hourly-forecast-value">N/A</span>
+                    </div>
+                    <div class="hourly-forecast-min-temp">
+                        <span class="hourly-forecast-placeholder">Min-temperature</span>
+                        <span class="hourly-forecast-value">N/A</span>
+                    </div>
+                    <img src="images/cloudy.svg" class="side-temperature-icon" alt="side weather icon">
+
+                    <!--
+                    <div class="hourly-forecast-humidity">
+                        <span class="hourly-forecast-placeholder">Humidity</span>
+                        <span class="hourly-forecast-value">N/A</span>
+                    </div>
+                    <div class="hourly-forecast-wind-speed">
+                        <span class="hourly-forecast-placeholder">Speed</span>
+                        <span class="hourly-forecast-value">N/A</span>
+                    </div>
+                    -->
+
+                </div>
+            </div>
+        </div>
+        <i class="fa fa-angle-double-down"></i>
     </div>
     <div class="content">
         <div class="hamburger-btn hamburger-btn-closed" onclick="openSideMenu()">

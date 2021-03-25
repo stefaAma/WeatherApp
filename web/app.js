@@ -1,3 +1,5 @@
+const NUM_HOURLY_FORECAST_ELEMENT = 2;
+
 let locationZone = document.getElementsByClassName("location-zone");
 let locationDate = document.getElementsByClassName("location-date");
 let temperatureDegree = document.getElementsByClassName("temperature-degree");
@@ -14,6 +16,9 @@ let content = document.getElementsByClassName("content");
 let wrapLoader = document.getElementsByClassName("wrap-loader");
 let sideMenu = document.getElementsByClassName("side-menu");
 let hamburgerBtn = document.getElementsByClassName("hamburger-btn");
+let sideContent = document.getElementsByClassName("side-content");
+let sideContentHourlyForecast = document.getElementsByClassName("side-content-info-hourly-forecast");
+let hourlyForecastElement = document.getElementsByClassName("hourly-forecast-element");
 
 let temperatureDegreeValue;
 let maxTemperatureValue;
@@ -21,12 +26,38 @@ let minTemperatureValue;
 
 const currentWeatherApi = {
     key: "42c3e3f5f36a943d8d948de6dd8b9dcc",
-    url: "https://api.openweathermap.org/data/2.5/weather"
+    url: "https://api.openweathermap.org/data/2.5/weather",
+    hourlyForecastUrl: "https://pro.openweathermap.org/data/2.5/forecast/hourly"
 };
+
+function duplicateElement(toDuplicate, parentElement, numDuplications) {
+    for (let i = 0; i < numDuplications; i++) {
+        let clone = toDuplicate.cloneNode(true);
+        parentElement.appendChild(clone);
+    }
+}
 
 function dismissLoader() {
     content[0].style.display = "flex";
     wrapLoader[0].style.display = "none";
+}
+
+function successHandlerSideContent(data) {
+
+}
+
+function failureHandlerSideContent(jqXHR) {
+
+}
+
+function setSideContent(contentStatus) {
+    if (contentStatus === true) {
+        let cityName = JSON.parse(window.sessionStorage.getItem("weatherData")).name;
+        $.get(currentWeatherApi.hourlyForecastUrl, {q: cityName, appid: currentWeatherApi.key}, successHandlerSideContent)
+            .fail(failureHandlerSideContent);
+    }
+    else
+        failureHandlerSideContent(null);
 }
 
 function successHandler(data) {
@@ -34,30 +65,28 @@ function successHandler(data) {
     trueState();
     console.log(data);
     setWeather(data);
-    dismissLoader();
+    setSideContent(true);
 }
 
 function failureHandler(jqXHR) {
-    if (jqXHR.status == 404)
+    if (jqXHR !== null && jqXHR.status == 404)
         console.log("error 404");
     else
         console.log("other error");
     falseState();
-    dismissLoader();
+    setSideContent(false);
 }
 
 window.addEventListener("load", () => {
     let weatherData = window.sessionStorage.getItem("weatherData");
     let weatherAppState = window.sessionStorage.getItem("weatherAppState");
+    duplicateElement(hourlyForecastElement[0], sideContentHourlyForecast[0], NUM_HOURLY_FORECAST_ELEMENT);
     if (weatherAppState === null)
         $.get(currentWeatherApi.url, {q: "sydney", appid: currentWeatherApi.key}, successHandler).fail(failureHandler);
     else if (JSON.parse(weatherAppState).state === true)
         $.get(currentWeatherApi.url, {q: JSON.parse(weatherData).name, appid: currentWeatherApi.key}, successHandler).fail(failureHandler);
-    else {
-        window.alert("Please insert a city name");
-        falseState();
-        dismissLoader();
-    }
+    else
+        failureHandler(null);
 });
 
 function setWeather(data) {
@@ -554,5 +583,19 @@ function openSideMenu() {
     else {
         hamburgerBtn[0].classList.add("hamburger-btn-closed");
         hamburgerBtn[0].classList.remove("hamburger-btn-open");
+    }
+}
+
+function openSideContent() {
+    if (sideContent[0].classList.contains("side-content-open") === false) {
+        sideContent[0].classList.add("side-content-open");
+        sideContent[0].classList.remove("side-content-close");
+    }
+}
+
+function closeSideContent() {
+    if (sideContent[0].classList.contains("side-content-close") === false) {
+        sideContent[0].classList.add("side-content-close");
+        sideContent[0].classList.remove("side-content-open");
     }
 }
