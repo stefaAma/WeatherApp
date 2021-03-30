@@ -20,37 +20,29 @@
         <span class="side-menu-item side-menu-closing-item" onclick="closeSideContent()">Close Side Content</span>
     </div>
     <div class="side-content side-content-close">
-        <i class="fa fa-angle-double-up"></i>
+        <h1 class="angle-double-up-wrapper disable-double">
+            <i class="fa fa-angle-double-up" onclick="displayPreviousElements()"></i>
+        </h1>
         <div class="side-content-info">
             <div class="side-content-info-hourly-forecast">
                 <div class="hourly-forecast-element">
                     <h3 class="hourly-forecast-time">Time</h3>
                     <h4 class="hourly-forecast-main-temp">Main Temp</h4>
-                    <div class="hourly-forecast-max-temp">
-                        <span class="hourly-forecast-placeholder">Max-temperature</span>
-                        <span class="hourly-forecast-value">N/A</span>
-                    </div>
-                    <div class="hourly-forecast-min-temp">
-                        <span class="hourly-forecast-placeholder">Min-temperature</span>
-                        <span class="hourly-forecast-value">N/A</span>
-                    </div>
-                    <img src="images/cloudy.svg" class="side-temperature-icon" alt="side weather icon">
-
-                    <!--
                     <div class="hourly-forecast-humidity">
                         <span class="hourly-forecast-placeholder">Humidity</span>
                         <span class="hourly-forecast-value">N/A</span>
                     </div>
                     <div class="hourly-forecast-wind-speed">
-                        <span class="hourly-forecast-placeholder">Speed</span>
+                        <span class="hourly-forecast-placeholder">Wind-Speed</span>
                         <span class="hourly-forecast-value">N/A</span>
                     </div>
-                    -->
-
+                    <img src="images/cloudy.svg" class="side-temperature-icon" alt="side weather icon">
                 </div>
             </div>
         </div>
-        <i class="fa fa-angle-double-down"></i>
+        <h1 class="angle-double-down-wrapper active-double">
+            <i class="fa fa-angle-double-down" onclick="displayNextElements()"></i>
+        </h1>
     </div>
     <div class="content">
         <div class="hamburger-btn hamburger-btn-closed" onclick="openSideMenu()">

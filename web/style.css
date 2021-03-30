@@ -429,6 +429,7 @@ body {
     align-items: center;
     justify-content: space-between;
     background-color: #313131;
+    overflow: hidden;
     transition: 0.5s ease;
 }
 
@@ -437,6 +438,7 @@ body {
 }
 
 .side-content-open {
+    box-shadow: -10px -10px 25px -5px rgba(0,0,0,0.8);
     width: 20%;
 }
 
@@ -450,6 +452,20 @@ body {
 
 .fa-angle-double-down {
     font-size: 7.5vh;
+}
+
+.active-double {
+    cursor: pointer;
+}
+
+.active-double:hover {
+    color: darkgreen;
+    text-shadow: 0 7px rgba(0,0,0,0.6);
+}
+
+.disable-double {
+    cursor: text;
+    color: darkred;
 }
 
 .side-content-info-hourly-forecast {
@@ -466,10 +482,11 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-evenly;
     border: 1px solid whitesmoke;
     border-radius: 5%;
     font-size: 2vh;
+    padding-top: 10px;
 }
 
 .hourly-forecast-time {
@@ -480,37 +497,20 @@ body {
     margin-bottom: 0.5vh;
 }
 
-.hourly-forecast-max-temp {
+.hourly-forecast-humidity, .hourly-forecast-wind-speed {
     display: flex;
     margin-bottom: 0.5vh;
     margin-top: 0.5vh;
     width: 23vh;
 }
-
-.hourly-forecast-min-temp {
-    display: flex;
-    margin-bottom: 0.5vh;
-    margin-top: 0.5vh;
-    width: 23vh;
-}
-
-/*.hourly-forecast-humidity {
-    display: flex;
-    margin-bottom: 0.5vh;
-    margin-top: 0.5vh;
-    width: 24vh;
-}
-
-.hourly-forecast-wind-speed {
-    display: flex;
-    margin-bottom: 0.5vh;
-    margin-top: 0.5vh;
-    width: 24vh;
-}*/
 
 .side-temperature-icon {
     height: 12vh;
     width: 12vh;
+}
+
+.side-temperature-icon:hover {
+    text-shadow: 2px 5px rgba(0, 0, 0, 0.6);
 }
 
 .hourly-forecast-placeholder {
