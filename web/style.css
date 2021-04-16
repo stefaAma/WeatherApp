@@ -468,17 +468,22 @@ body {
     color: darkred;
 }
 
-.side-content-info-hourly-forecast {
+.side-content-info-hourly-forecast, .side-content-info-daily-forecast {
     height: 80vh;
-    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
 }
 
-.hourly-forecast-element {
-    width: 25vh;
-    height: 25vh;
+.side-content-info-hourly-forecast-open, .side-content-info-daily-forecast-open {
+    display: flex;
+}
+
+.side-content-info-hourly-forecast-closed, .side-content-info-daily-forecast-closed {
+    display: none;
+}
+
+.hourly-forecast-element, .daily-forecast-element {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -489,19 +494,28 @@ body {
     padding-top: 10px;
 }
 
-.hourly-forecast-time {
+.hourly-forecast-element {
+    width: 25vh;
+    height: 25vh;
+}
+
+.hourly-forecast-time, .hourly-forecast-main-temp, .daily-forecast-date {
     margin-bottom: 0.5vh;
 }
 
-.hourly-forecast-main-temp {
-    margin-bottom: 0.5vh;
-}
-
-.hourly-forecast-humidity, .hourly-forecast-wind-speed {
+.hourly-forecast-humidity, .hourly-forecast-wind-speed, .daily-forecast-sunrise,
+.daily-forecast-sunset, .daily-forecast-day-temp, .daily-forecast-night-temp {
     display: flex;
     margin-bottom: 0.5vh;
     margin-top: 0.5vh;
+}
+
+.hourly-forecast-humidity, .hourly-forecast-wind-speed {
     width: 23vh;
+}
+
+.daily-forecast-sunrise, .daily-forecast-sunset, .daily-forecast-day-temp, .daily-forecast-night-temp {
+    width: 28vh;
 }
 
 .side-temperature-icon {
@@ -513,10 +527,15 @@ body {
     text-shadow: 2px 5px rgba(0, 0, 0, 0.6);
 }
 
-.hourly-forecast-placeholder {
+.hourly-forecast-placeholder, .daily-forecast-placeholder {
     margin-right: auto;
 }
 
-.hourly-forecast-value {
+.hourly-forecast-value, .daily-forecast-value {
     margin-left: auto;
+}
+
+.daily-forecast-element {
+    width: 30vh;
+    height: 35vh;
 }

@@ -15,16 +15,16 @@
         <div class="loader"></div>
     </div>
     <div class="side-menu side-menu-closed">
-        <span class="side-menu-item" onclick="openSideContent()">Hourly Forecast</span>
-        <span class="side-menu-item">Daily Forecast</span>
+        <span class="side-menu-item" onclick="displayHourlyForecastElements()">Hourly Forecast</span>
+        <span class="side-menu-item" onclick="displayDailyForecastElements()">Daily Forecast</span>
         <span class="side-menu-item side-menu-closing-item" onclick="closeSideContent()">Close Side Content</span>
     </div>
     <div class="side-content side-content-close">
         <h1 class="angle-double-up-wrapper disable-double">
-            <i class="fa fa-angle-double-up" onclick="displayPreviousElements()"></i>
+            <i class="fa fa-angle-double-up"></i>
         </h1>
         <div class="side-content-info">
-            <div class="side-content-info-hourly-forecast">
+            <div class="side-content-info-hourly-forecast side-content-info-hourly-forecast-closed">
                 <div class="hourly-forecast-element">
                     <h3 class="hourly-forecast-time">Time</h3>
                     <h4 class="hourly-forecast-main-temp">Main Temp</h4>
@@ -39,9 +39,31 @@
                     <img src="images/cloudy.svg" class="side-temperature-icon" alt="side weather icon">
                 </div>
             </div>
+            <div class="side-content-info-daily-forecast side-content-info-daily-forecast-closed">
+                <div class="daily-forecast-element">
+                    <h3 class="daily-forecast-date">Date</h3>
+                    <div class="daily-forecast-sunrise">
+                        <span class="daily-forecast-placeholder">Sunrise</span>
+                        <h4 class="daily-forecast-value">N/A</h4>
+                    </div>
+                    <div class="daily-forecast-sunset">
+                        <span class="daily-forecast-placeholder">Sunset</span>
+                        <h4 class="daily-forecast-value">N/A</h4>
+                    </div>
+                    <div class="daily-forecast-day-temp">
+                        <span class="daily-forecast-placeholder">Day-temperature</span>
+                        <span class="daily-forecast-value">N/A</span>
+                    </div>
+                    <div class="daily-forecast-night-temp">
+                        <span class="daily-forecast-placeholder">Night-temperature</span>
+                        <span class="daily-forecast-value">N/A</span>
+                    </div>
+                    <img src="images/cloudy.svg" class="side-temperature-icon" alt="side weather icon">
+                </div>
+            </div>
         </div>
         <h1 class="angle-double-down-wrapper active-double">
-            <i class="fa fa-angle-double-down" onclick="displayNextElements()"></i>
+            <i class="fa fa-angle-double-down"></i>
         </h1>
     </div>
     <div class="content">
