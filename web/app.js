@@ -646,14 +646,20 @@ function closeSideContent() {
         if (lastOptionChosen === 0) {
             sideContentHourlyForecast[0].classList.add("side-content-info-hourly-forecast-closed");
             sideContentHourlyForecast[0].classList.remove("side-content-info-hourly-forecast-open");
-            setHourlyElementsToDefault(data, timezone);
+            for (let i = 0; i < OFFSET_SIDE_INDEX; i++) {
+                setHourlyForecastElement(data, timezone, i, i);
+                removeThreeElementsAnimation(hourlyForecastElement, i);
+            }
             double_up_wrapper[0].querySelector(".fa-angle-double-up").removeEventListener("click", displayPreviousHourlyElements);
             double_down_wrapper[0].querySelector(".fa-angle-double-down").removeEventListener("click", displayNextHourlyElements);
         }
         else if (lastOptionChosen === 1) {
             sideContentDailyForecast[0].classList.add("side-content-info-daily-forecast-closed");
             sideContentDailyForecast[0].classList.remove("side-content-info-daily-forecast-open");
-            setDailyElementsToDefault(data, timezone);
+            for (let i = 0; i < DAILY_ELEMENTS_OFFSET; i++) {
+                setDailyForecastElement(data, timezone, i, i);
+                removeTwoElementsAnimation(dailyForecastElement, i);
+            }
             double_up_wrapper[0].querySelector(".fa-angle-double-up").removeEventListener("click", displayPreviousDailyElements);
             double_down_wrapper[0].querySelector(".fa-angle-double-down").removeEventListener("click", displayNextDailyElements);
         }
@@ -685,14 +691,20 @@ function setDailyElementsToDefault(data, timezone) {
 }
 
 function defaultHourlyForecast(data, timezone) {
-    setHourlyElementsToDefault(data, timezone);
+    for (let i = 0; i < OFFSET_SIDE_INDEX; i++) {
+        setHourlyForecastElement(data, timezone, i, i);
+        previousThreeElementsAnimation(hourlyForecastElement, i);
+    }
     low_side_index = 0;
     high_side_index = OFFSET_SIDE_INDEX - 1;
     setDoubleWrapperToDefault();
 }
 
 function defaultDailyForecast(data, timezone) {
-    setDailyElementsToDefault(data, timezone);
+    for (let i = 0; i < DAILY_ELEMENTS_OFFSET; i++) {
+        setDailyForecastElement(data, timezone, i, i);
+        previousTwoElementsAnimation(dailyForecastElement, i);
+    }
     low_side_index = 0;
     high_side_index = DAILY_ELEMENTS_OFFSET - 1;
     setDoubleWrapperToDefault();
@@ -726,7 +738,10 @@ function displayHourlyForecastElements() {
         if (lastOptionChosen === 1) {
             sideContentDailyForecast[0].classList.add("side-content-info-daily-forecast-closed");
             sideContentDailyForecast[0].classList.remove("side-content-info-daily-forecast-open");
-            setDailyElementsToDefault(data, timezone);
+            for (let i = 0; i < DAILY_ELEMENTS_OFFSET; i++) {
+                setDailyForecastElement(data, timezone, i, i);
+                removeTwoElementsAnimation(dailyForecastElement, i);
+            }
             double_up_wrapper[0].querySelector(".fa-angle-double-up").removeEventListener("click", displayPreviousDailyElements);
             double_down_wrapper[0].querySelector(".fa-angle-double-down").removeEventListener("click", displayNextDailyElements);
         }
@@ -743,14 +758,224 @@ function displayHourlyForecastElements() {
     }
 }
 
+function removeTwoElementsAnimation(elementsList, number) {
+    if (number === 0) {
+        elementsList[number].classList.remove("previous-one-of-two");
+        elementsList[number].classList.remove("next-one-of-two");
+    }
+    else if (number === 1) {
+        elementsList[number].classList.remove("previous-two-of-two");
+        elementsList[number].classList.remove("next-two-of-two");
+    }
+    else
+        throw {
+            name: "TwoElementsAnimationException",
+            message: "The element's index isn't in the range (0 - 1)"
+        }
+}
+
+function removeThreeElementsAnimation(elementsList, number) {
+    if (number === 0) {
+        elementsList[number].classList.remove("previous-one-of-three");
+        elementsList[number].classList.remove("next-one-of-three");
+    }
+    else if (number === 1) {
+        elementsList[number].classList.remove("previous-two-of-three");
+        elementsList[number].classList.remove("next-two-of-three");
+    }
+    else if (number === 2) {
+        elementsList[number].classList.remove("previous-three-of-three");
+        elementsList[number].classList.remove("next-three-of-three");
+    }
+    else
+        throw {
+            name: "ThreeElementsAnimationException",
+            message: "The element's index isn't in the range (0 - 2)"
+        }
+}
+
+function previousThreeElementsAnimation(elementsList, number) {
+    if (number === 0) {
+        if(elementsList[number].classList.contains("next-one-of-three")) {
+            elementsList[number].classList.remove("next-one-of-three");
+            elementsList[number].classList.add("previous-one-of-three");
+        }
+        else if (elementsList[number].classList.contains("previous-one-of-three")) {
+            let clonedElement = elementsList[number].cloneNode(true);
+            let emptyText = document.createTextNode("");
+            elementsList[number].parentNode.replaceChild(emptyText, elementsList[number]);
+            emptyText.parentNode.replaceChild(clonedElement, emptyText);
+        }
+        else
+            elementsList[number].classList.add("previous-one-of-three");
+    }
+    else if (number === 1) {
+        if(elementsList[number].classList.contains("next-two-of-three")) {
+            elementsList[number].classList.remove("next-two-of-three");
+            elementsList[number].classList.add("previous-two-of-three");
+        }
+        else if (elementsList[number].classList.contains("previous-two-of-three")) {
+            let clonedElement = elementsList[number].cloneNode(true);
+            let emptyText = document.createTextNode("");
+            elementsList[number].parentNode.replaceChild(emptyText, elementsList[number]);
+            emptyText.parentNode.replaceChild(clonedElement, emptyText);
+        }
+        else
+            elementsList[number].classList.add("previous-two-of-three");
+    }
+    else if (number === 2) {
+        if(elementsList[number].classList.contains("next-three-of-three")) {
+            elementsList[number].classList.remove("next-three-of-three");
+            elementsList[number].classList.add("previous-three-of-three");
+        }
+        else if (elementsList[number].classList.contains("previous-three-of-three")) {
+            let clonedElement = elementsList[number].cloneNode(true);
+            let emptyText = document.createTextNode("");
+            elementsList[number].parentNode.replaceChild(emptyText, elementsList[number]);
+            emptyText.parentNode.replaceChild(clonedElement, emptyText);
+        }
+        else
+            elementsList[number].classList.add("previous-three-of-three");
+    }
+    else
+        throw {
+            name: "ThreeElementsAnimationException",
+            message: "The element's index isn't in the range (0 - 2)"
+        }
+}
+
+function nextThreeElementsAnimation(elementsList, number) {
+    if (number === 0) {
+        if(elementsList[number].classList.contains("previous-one-of-three")) {
+            elementsList[number].classList.remove("previous-one-of-three");
+            elementsList[number].classList.add("next-one-of-three");
+        }
+        else if (elementsList[number].classList.contains("next-one-of-three")) {
+            let clonedElement = elementsList[number].cloneNode(true);
+            let emptyText = document.createTextNode("");
+            elementsList[number].parentNode.replaceChild(emptyText, elementsList[number]);
+            emptyText.parentNode.replaceChild(clonedElement, emptyText);
+        }
+        else
+            elementsList[number].classList.add("next-one-of-three");
+    }
+    else if (number === 1) {
+        if(elementsList[number].classList.contains("previous-two-of-three")) {
+            elementsList[number].classList.remove("previous-two-of-three");
+            elementsList[number].classList.add("next-two-of-three");
+        }
+        else if (elementsList[number].classList.contains("next-two-of-three")) {
+            let clonedElement = elementsList[number].cloneNode(true);
+            let emptyText = document.createTextNode("");
+            elementsList[number].parentNode.replaceChild(emptyText, elementsList[number]);
+            emptyText.parentNode.replaceChild(clonedElement, emptyText);
+        }
+        else
+            elementsList[number].classList.add("next-two-of-three");
+    }
+    else if (number === 2) {
+        if(elementsList[number].classList.contains("previous-three-of-three")) {
+            elementsList[number].classList.remove("previous-three-of-three");
+            elementsList[number].classList.add("next-three-of-three");
+        }
+        else if (elementsList[number].classList.contains("next-three-of-three")) {
+            let clonedElement = elementsList[number].cloneNode(true);
+            let emptyText = document.createTextNode("");
+            elementsList[number].parentNode.replaceChild(emptyText, elementsList[number]);
+            emptyText.parentNode.replaceChild(clonedElement, emptyText);
+        }
+        else
+            elementsList[number].classList.add("next-three-of-three");
+    }
+    else
+        throw {
+            name: "ThreeElementsAnimationException",
+            message: "The element's index isn't in the range (0 - 2)"
+        }
+}
+
+function previousTwoElementsAnimation(elementsList, number) {
+    if (number === 0) {
+        if(elementsList[number].classList.contains("next-one-of-two")) {
+            elementsList[number].classList.remove("next-one-of-two");
+            elementsList[number].classList.add("previous-one-of-two");
+        }
+        else if (elementsList[number].classList.contains("previous-one-of-two")) {
+            let clonedElement = elementsList[number].cloneNode(true);
+            let emptyText = document.createTextNode("");
+            elementsList[number].parentNode.replaceChild(emptyText, elementsList[number]);
+            emptyText.parentNode.replaceChild(clonedElement, emptyText);
+        }
+        else
+            elementsList[number].classList.add("previous-one-of-two");
+    }
+    else if (number === 1) {
+        if(elementsList[number].classList.contains("next-two-of-two")) {
+            elementsList[number].classList.remove("next-two-of-two");
+            elementsList[number].classList.add("previous-two-of-two");
+        }
+        else if (elementsList[number].classList.contains("previous-two-of-two")) {
+            let clonedElement = elementsList[number].cloneNode(true);
+            let emptyText = document.createTextNode("");
+            elementsList[number].parentNode.replaceChild(emptyText, elementsList[number]);
+            emptyText.parentNode.replaceChild(clonedElement, emptyText);
+        }
+        else
+            elementsList[number].classList.add("previous-two-of-two");
+    }
+    else
+        throw {
+            name: "TwoElementsAnimationException",
+            message: "The element's index isn't in the range (0 - 1)"
+        }
+}
+
+function nextTwoElementsAnimation(elementsList, number) {
+    if (number === 0) {
+        if(elementsList[number].classList.contains("previous-one-of-two")) {
+            elementsList[number].classList.remove("previous-one-of-two");
+            elementsList[number].classList.add("next-one-of-two");
+        }
+        else if (elementsList[number].classList.contains("next-one-of-two")) {
+            let clonedElement = elementsList[number].cloneNode(true);
+            let emptyText = document.createTextNode("");
+            elementsList[number].parentNode.replaceChild(emptyText, elementsList[number]);
+            emptyText.parentNode.replaceChild(clonedElement, emptyText);
+        }
+        else
+            elementsList[number].classList.add("next-one-of-two");
+    }
+    else if (number === 1) {
+        if(elementsList[number].classList.contains("previous-two-of-two")) {
+            elementsList[number].classList.remove("previous-two-of-two");
+            elementsList[number].classList.add("next-two-of-two");
+        }
+        else if (elementsList[number].classList.contains("next-two-of-two")) {
+            let clonedElement = elementsList[number].cloneNode(true);
+            let emptyText = document.createTextNode("");
+            elementsList[number].parentNode.replaceChild(emptyText, elementsList[number]);
+            emptyText.parentNode.replaceChild(clonedElement, emptyText);
+        }
+        else
+            elementsList[number].classList.add("next-two-of-two");
+    }
+    else
+        throw {
+            name: "TwoElementsAnimationException",
+            message: "The element's index isn't in the range (0 - 1)"
+        }
+}
+
 function displayPreviousHourlyElements() {
     let state = JSON.parse(window.sessionStorage.getItem("weatherSideInfoState"));
     if (state !== null && state.state && low_side_index > 0) {
         let data = JSON.parse(window.sessionStorage.getItem("weatherSideContent"));
         let timezone = JSON.parse(window.sessionStorage.getItem("weatherData")).timezone;
         if (low_side_index - OFFSET_SIDE_INDEX >= 0) {
-            for (let i = 0; i < OFFSET_SIDE_INDEX; i++)
+            for (let i = 0; i < OFFSET_SIDE_INDEX; i++) {
                 setHourlyForecastElement(data, timezone, i, low_side_index - OFFSET_SIDE_INDEX + i);
+                previousThreeElementsAnimation(hourlyForecastElement, i);
+            }
             if (high_side_index === MAX_NUM_HOURS - 1) {
                 double_down_wrapper[0].classList.add("active-double");
                 double_down_wrapper[0].classList.remove("disable-double");
@@ -773,8 +998,10 @@ function displayNextHourlyElements() {
         let data = JSON.parse(window.sessionStorage.getItem("weatherSideContent"));
         let timezone = JSON.parse(window.sessionStorage.getItem("weatherData")).timezone;
         if (high_side_index + OFFSET_SIDE_INDEX < MAX_NUM_HOURS) {
-            for (let i = 1; i <= OFFSET_SIDE_INDEX; i++)
+            for (let i = 1; i <= OFFSET_SIDE_INDEX; i++) {
                 setHourlyForecastElement(data, timezone, i - 1, high_side_index + i);
+                nextThreeElementsAnimation(hourlyForecastElement, i - 1);
+            }
             if (low_side_index === 0) {
                 double_up_wrapper[0].classList.add("active-double");
                 double_up_wrapper[0].classList.remove("disable-double");
@@ -789,6 +1016,7 @@ function displayNextHourlyElements() {
             let j = OFFSET_SIDE_INDEX - 1;
             for (let i = MAX_NUM_HOURS - 1; i >= MAX_NUM_HOURS - OFFSET_SIDE_INDEX; i--) {
                 setHourlyForecastElement(data, timezone, j, i);
+                nextThreeElementsAnimation(hourlyForecastElement, j);
                 j--;
             }
             low_side_index = MAX_NUM_HOURS - OFFSET_SIDE_INDEX;
@@ -806,7 +1034,10 @@ function displayDailyForecastElements() {
         if (lastOptionChosen === 0) {
             sideContentHourlyForecast[0].classList.add("side-content-info-hourly-forecast-closed");
             sideContentHourlyForecast[0].classList.remove("side-content-info-hourly-forecast-open");
-            setHourlyElementsToDefault(data, timezone);
+            for (let i = 0; i < OFFSET_SIDE_INDEX; i++) {
+                setHourlyForecastElement(data, timezone, i, i);
+                removeThreeElementsAnimation(hourlyForecastElement, i);
+            }
             double_up_wrapper[0].querySelector(".fa-angle-double-up").removeEventListener("click", displayPreviousHourlyElements);
             double_down_wrapper[0].querySelector(".fa-angle-double-down").removeEventListener("click", displayNextHourlyElements);
         }
@@ -829,8 +1060,10 @@ function displayPreviousDailyElements() {
         let data = JSON.parse(window.sessionStorage.getItem("weatherSideContent"));
         let timezone = JSON.parse(window.sessionStorage.getItem("weatherData")).timezone;
         if (low_side_index - DAILY_ELEMENTS_OFFSET >= 0) {
-            for (let i = 0; i < DAILY_ELEMENTS_OFFSET; i++)
+            for (let i = 0; i < DAILY_ELEMENTS_OFFSET; i++) {
                 setDailyForecastElement(data, timezone, i, low_side_index - DAILY_ELEMENTS_OFFSET + i);
+                previousTwoElementsAnimation(dailyForecastElement, i);
+            }
             if (high_side_index === MAX_NUM_DAYS - 1) {
                 double_down_wrapper[0].classList.add("active-double");
                 double_down_wrapper[0].classList.remove("disable-double");
@@ -853,8 +1086,10 @@ function displayNextDailyElements() {
         let data = JSON.parse(window.sessionStorage.getItem("weatherSideContent"));
         let timezone = JSON.parse(window.sessionStorage.getItem("weatherData")).timezone;
         if (high_side_index + DAILY_ELEMENTS_OFFSET < MAX_NUM_DAYS) {
-            for (let i = 1; i <= DAILY_ELEMENTS_OFFSET; i++)
+            for (let i = 1; i <= DAILY_ELEMENTS_OFFSET; i++) {
                 setDailyForecastElement(data, timezone, i - 1, high_side_index + i);
+                nextTwoElementsAnimation(dailyForecastElement, i - 1);
+            }
             if (low_side_index === 0) {
                 double_up_wrapper[0].classList.add("active-double");
                 double_up_wrapper[0].classList.remove("disable-double");
@@ -869,6 +1104,7 @@ function displayNextDailyElements() {
             let j = DAILY_ELEMENTS_OFFSET - 1;
             for (let i = MAX_NUM_DAYS - 1; i >= MAX_NUM_DAYS - DAILY_ELEMENTS_OFFSET; i--) {
                 setDailyForecastElement(data, timezone, j, i);
+                nextTwoElementsAnimation(dailyForecastElement, j);
                 j--;
             }
             low_side_index = MAX_NUM_DAYS - DAILY_ELEMENTS_OFFSET;
