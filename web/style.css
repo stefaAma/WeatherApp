@@ -404,19 +404,25 @@ body {
 .side-menu-item {
     font-size: 3vh;
     text-transform: uppercase;
-    margin-bottom: 2vh;
+    margin-bottom: 3vh;
     cursor: pointer;
     overflow: no-display;
     transition: 0.25s ease;
     white-space: nowrap;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .side-menu-item:hover {
-    color: lightblue;
+    color: dodgerblue;
 }
 
-.side-menu-closing-item {
+#side-menu-closing-item {
     justify-self: flex-end;
+}
+
+#side-menu-closing-item:hover {
+    color: lightcoral;
 }
 
 .side-content {
@@ -468,14 +474,14 @@ body {
     color: darkred;
 }
 
-.side-content-info-hourly-forecast, .side-content-info-daily-forecast {
+.side-content-info-hourly-forecast, .side-content-info-daily-forecast, .side-content-info-pollution-forecast {
     height: 80vh;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
 }
 
-.side-content-info-hourly-forecast-open, .side-content-info-daily-forecast-open {
+.side-content-info-hourly-forecast-open, .side-content-info-daily-forecast-open, .side-content-info-pollution-forecast-open {
     display: flex;
     animation: side-content-opened 1.2s ease;
 }
@@ -489,11 +495,11 @@ body {
     }
 }
 
-.side-content-info-hourly-forecast-closed, .side-content-info-daily-forecast-closed {
+.side-content-info-hourly-forecast-closed, .side-content-info-daily-forecast-closed, .side-content-info-pollution-forecast-closed {
     display: none;
 }
 
-.hourly-forecast-element, .daily-forecast-element {
+.hourly-forecast-element, .daily-forecast-element, .pollution-forecast-element {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -509,12 +515,15 @@ body {
     height: 25vh;
 }
 
-.hourly-forecast-time, .hourly-forecast-main-temp, .daily-forecast-date {
+.hourly-forecast-time, .hourly-forecast-main-temp, .daily-forecast-date, .pollution-forecast-time {
     margin-bottom: 0.5vh;
 }
 
 .hourly-forecast-humidity, .hourly-forecast-wind-speed, .daily-forecast-sunrise,
-.daily-forecast-sunset, .daily-forecast-day-temp, .daily-forecast-night-temp {
+.daily-forecast-sunset, .daily-forecast-day-temp, .daily-forecast-night-temp,
+.pollution-forecast-air-quality, .pollution-forecast-CO, .pollution-forecast-NO-2,
+.pollution-forecast-O-3, .pollution-forecast-SO-2, .pollution-forecast-NH-3,
+.pollution-forecast-PM-2-5, .pollution-forecast-PM-10, .pollution-forecast-NO{
     display: flex;
     margin-bottom: 0.5vh;
     margin-top: 0.5vh;
@@ -525,7 +534,13 @@ body {
 }
 
 .daily-forecast-sunrise, .daily-forecast-sunset, .daily-forecast-day-temp, .daily-forecast-night-temp {
-    width: 28vh;
+    width: 24vh;
+}
+
+.pollution-forecast-air-quality, .pollution-forecast-CO, .pollution-forecast-NO, .pollution-forecast-NO-2,
+.pollution-forecast-O-3, .pollution-forecast-SO-2, .pollution-forecast-NH-3, .pollution-forecast-PM-2-5,
+.pollution-forecast-PM-10 {
+    width: 24vh;
 }
 
 .side-temperature-icon {
@@ -537,17 +552,22 @@ body {
     text-shadow: 2px 5px rgba(0, 0, 0, 0.6);
 }
 
-.hourly-forecast-placeholder, .daily-forecast-placeholder {
+.hourly-forecast-placeholder, .daily-forecast-placeholder, .pollution-forecast-placeholder {
     margin-right: auto;
 }
 
-.hourly-forecast-value, .daily-forecast-value {
+.hourly-forecast-value, .daily-forecast-value, .pollution-forecast-value {
     margin-left: auto;
 }
 
 .daily-forecast-element {
-    width: 30vh;
+    width: 26vh;
     height: 35vh;
+}
+
+.pollution-forecast-element {
+    width: 26vh;
+    height: 38vh;
 }
 
 @keyframes first-element-down-of-three {

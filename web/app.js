@@ -1,9 +1,13 @@
 const NUM_HOURLY_FORECAST_ELEMENT = 2;
 const NUM_DAILY_FORECAST_ELEMENT = 1;
+const NUM_POLLUTION_FORECAST_ELEMENT = 1;
 const DAILY_ELEMENTS_OFFSET = 2;
 const OFFSET_SIDE_INDEX = 3;
+const POLLUTION_STARTING_INDEX = 129;
+const POLLUTION_ELEMENTS_OFFSET = 2;
 const MAX_NUM_HOURS = 24;
 const MAX_NUM_DAYS = 7;
+const MAX_NUM_POLLUTION_HOURS = POLLUTION_STARTING_INDEX + 24;
 
 let locationZone = document.getElementsByClassName("location-zone");
 let locationDate = document.getElementsByClassName("location-date");
@@ -28,6 +32,8 @@ let double_up_wrapper = document.getElementsByClassName("angle-double-up-wrapper
 let double_down_wrapper = document.getElementsByClassName("angle-double-down-wrapper");
 let sideContentDailyForecast = document.getElementsByClassName("side-content-info-daily-forecast");
 let dailyForecastElement = document.getElementsByClassName("daily-forecast-element");
+let sideContentPollutionForecast = document.getElementsByClassName("side-content-info-pollution-forecast");
+let pollutionForecastElement = document.getElementsByClassName("pollution-forecast-element");
 
 let temperatureDegreeValue;
 let maxTemperatureValue;
@@ -40,7 +46,8 @@ let lastOptionChosen = -1;
 const currentWeatherApi = {
     key: "42c3e3f5f36a943d8d948de6dd8b9dcc",
     url: "https://api.openweathermap.org/data/2.5/weather",
-    oneCallUrl: "https://api.openweathermap.org/data/2.5/onecall"
+    oneCallUrl: "https://api.openweathermap.org/data/2.5/onecall",
+    pollutionUrl: "http://api.openweathermap.org/data/2.5/air_pollution/forecast"
 };
 
 function duplicateElement(toDuplicate, parentElement, numDuplications) {
@@ -70,6 +77,28 @@ function calculateSideDate(date, timezone) {
     return fixDateTimeValues(soughtTime.minutes, soughtTime.hours, soughtDate.soughtDay, soughtDate.soughtMonth, soughtDate.soughtYear);
 }
 
+function successHandlerPollutionContent(data) {
+
+    console.log(data);
+
+    window.sessionStorage.setItem("weatherPollutionContent", JSON.stringify(data));
+    window.sessionStorage.setItem("weatherPollutionInfoState", JSON.stringify({state: true}));
+    let timezone = JSON.parse(window.sessionStorage.getItem("weatherData")).timezone;
+    setPollutionElementsToDefault(data, timezone);
+    dismissLoader();
+}
+
+function failureHandlerPollutionContent(jqXHR) {
+    if (jqXHR !== null && jqXHR.status == 404)
+        console.log("error 404");
+    else
+        console.log("other error");
+    window.sessionStorage.setItem("weatherPollutionInfoState", JSON.stringify({state: false}));
+    for (let i = 0; i < POLLUTION_ELEMENTS_OFFSET; i++)
+        pollutionForecastElement[i].querySelector(".pollution-forecast-time").innerHTML = "N/A";
+    dismissLoader();
+}
+
 function successHandlerSideContent(data) {
     //console.log(data);
     window.sessionStorage.setItem("weatherSideContent", JSON.stringify(data));
@@ -77,7 +106,10 @@ function successHandlerSideContent(data) {
     let timezone = JSON.parse(window.sessionStorage.getItem("weatherData")).timezone;
     setHourlyElementsToDefault(data, timezone);
     setDailyElementsToDefault(data, timezone);
-    dismissLoader();
+    let lat = JSON.parse(window.sessionStorage.getItem("weatherData")).coord.lat;
+    let long = JSON.parse(window.sessionStorage.getItem("weatherData")).coord.lon;
+    $.get(currentWeatherApi.pollutionUrl, {lat: lat, lon: long, appid: currentWeatherApi.key}, successHandlerPollutionContent)
+        .fail(failureHandlerPollutionContent);
 }
 
 function failureHandlerSideContent(jqXHR) {
@@ -91,7 +123,7 @@ function failureHandlerSideContent(jqXHR) {
         hourlyForecastElement[i].querySelector(".hourly-forecast-main-temp").innerHTML = "N/A";
         hourlyForecastElement[i].querySelector(".side-temperature-icon").src = "images/weather_sunset.svg";
     }
-    dismissLoader();
+    failureHandlerPollutionContent(null);
 }
 
 function setSideContent(contentStatus) {
@@ -127,6 +159,7 @@ window.addEventListener("load", () => {
     let weatherAppState = window.sessionStorage.getItem("weatherAppState");
     duplicateElement(hourlyForecastElement[0], sideContentHourlyForecast[0], NUM_HOURLY_FORECAST_ELEMENT);
     duplicateElement(dailyForecastElement[0], sideContentDailyForecast[0], NUM_DAILY_FORECAST_ELEMENT);
+    duplicateElement(pollutionForecastElement[0], sideContentPollutionForecast[0], NUM_POLLUTION_FORECAST_ELEMENT);
     if (weatherAppState === null)
         $.get(currentWeatherApi.url, {q: "sydney", appid: currentWeatherApi.key}, successHandler).fail(failureHandler);
     else if (JSON.parse(weatherAppState).state === true)
@@ -663,6 +696,19 @@ function closeSideContent() {
             double_up_wrapper[0].querySelector(".fa-angle-double-up").removeEventListener("click", displayPreviousDailyElements);
             double_down_wrapper[0].querySelector(".fa-angle-double-down").removeEventListener("click", displayNextDailyElements);
         }
+        else if (lastOptionChosen === 2) {
+            let data = JSON.parse(window.sessionStorage.getItem("weatherPollutionContent"));
+            sideContentPollutionForecast[0].classList.add("side-content-info-pollution-forecast-closed");
+            sideContentPollutionForecast[0].classList.remove("side-content-info-pollution-forecast-open");
+            let j = POLLUTION_STARTING_INDEX;
+            for (let i = 0; i < POLLUTION_ELEMENTS_OFFSET; i++) {
+                setPollutionForecastElement(data, timezone, i, j);
+                removeTwoElementsAnimation(pollutionForecastElement, i);
+                j++;
+            }
+            double_up_wrapper[0].querySelector(".fa-angle-double-up").removeEventListener("click", displayPreviousPollutionElements);
+            double_down_wrapper[0].querySelector(".fa-angle-double-down").removeEventListener("click", displayNextPollutionElements);
+        }
         lastOptionChosen = -1;
         low_side_index = 0;
         high_side_index = 0;
@@ -690,6 +736,68 @@ function setDailyElementsToDefault(data, timezone) {
         setDailyForecastElement(data, timezone, i, i);
 }
 
+function setPollutionElementsToDefault(data, timezone) {
+    let j = POLLUTION_STARTING_INDEX;
+    for (let i = 0; i < POLLUTION_ELEMENTS_OFFSET; i++) {
+        setPollutionForecastElement(data, timezone, i, j);
+        j++;
+    }
+}
+
+function setPollutionForecastElement(data, timezone, pollution_forecast_index, data_index) {
+    let date = calculateSideDate(data.list[data_index].dt, timezone);
+    pollutionForecastElement[pollution_forecast_index].querySelector(".pollution-forecast-time").innerHTML = date.year + "/" + date.fixedMonths + "/" + date.fixedDays + " Time: " + date.fixedHours + ":" + date.fixedMinutes;
+    try {
+        setPollutionAirQuality(data, pollution_forecast_index, data_index);
+    } catch (e) {
+        console.log("Exception: " + e.name + "\nMessage: " + e.message);
+    }
+    pollutionForecastElement[pollution_forecast_index].querySelector(".pollution-forecast-CO").querySelector(".pollution-forecast-value").innerHTML = data.list[data_index].components.co + "μg/m3";
+    pollutionForecastElement[pollution_forecast_index].querySelector(".pollution-forecast-NO").querySelector(".pollution-forecast-value").innerHTML = data.list[data_index].components.no + "μg/m3";
+    pollutionForecastElement[pollution_forecast_index].querySelector(".pollution-forecast-NO-2").querySelector(".pollution-forecast-value").innerHTML = data.list[data_index].components.no2 + "μg/m3";
+    pollutionForecastElement[pollution_forecast_index].querySelector(".pollution-forecast-O-3").querySelector(".pollution-forecast-value").innerHTML = data.list[data_index].components.o3 + "μg/m3";
+    pollutionForecastElement[pollution_forecast_index].querySelector(".pollution-forecast-SO-2").querySelector(".pollution-forecast-value").innerHTML = data.list[data_index].components.so2 + "μg/m3";
+    pollutionForecastElement[pollution_forecast_index].querySelector(".pollution-forecast-NH-3").querySelector(".pollution-forecast-value").innerHTML = data.list[data_index].components.nh3 + "μg/m3";
+    pollutionForecastElement[pollution_forecast_index].querySelector(".pollution-forecast-PM-2-5").querySelector(".pollution-forecast-value").innerHTML = data.list[data_index].components.pm2_5 + "μg/m3";
+    pollutionForecastElement[pollution_forecast_index].querySelector(".pollution-forecast-PM-10").querySelector(".pollution-forecast-value").innerHTML = data.list[data_index].components.pm10 + "μg/m3";
+}
+
+function setPollutionAirQuality(data, pollution_forecast_index, data_index) {
+    let element = pollutionForecastElement[pollution_forecast_index].querySelector(".pollution-forecast-air-quality").querySelector(".pollution-forecast-value");
+    let placeholder = pollutionForecastElement[pollution_forecast_index].querySelector(".pollution-forecast-air-quality").querySelector(".pollution-forecast-placeholder");
+    let air_quality_index = data.list[data_index].main.aqi;
+    if (air_quality_index === 1) {
+        element.innerHTML = "Good";
+        element.style.color = "#1aff1a";
+        placeholder.style.color = "#1aff1a";
+    }
+    else if (air_quality_index === 2) {
+        element.innerHTML = "Fair";
+        element.style.color = "#99ff33";
+        placeholder.style.color = "#99ff33";
+    }
+    else if (air_quality_index === 3) {
+        element.innerHTML = "Moderate";
+        element.style.color = "#ffff1a";
+        placeholder.style.color = "#ffff1a";
+    }
+    else if (air_quality_index === 4) {
+        element.innerHTML = "Poor";
+        element.style.color = "#ff751a";
+        placeholder.style.color = "#ff751a";
+    }
+    else if (air_quality_index === 5) {
+        element.innerHTML = "Very Poor";
+        element.style.color = "#ff1a1a";
+        placeholder.style.color = "#ff1a1a";
+    }
+    else
+        throw {
+            name: "AirQualityIndexException",
+            message: "The air_quality_index isn't in range (1 - 5)"
+        }
+}
+
 function defaultHourlyForecast(data, timezone) {
     for (let i = 0; i < OFFSET_SIDE_INDEX; i++) {
         setHourlyForecastElement(data, timezone, i, i);
@@ -707,6 +815,18 @@ function defaultDailyForecast(data, timezone) {
     }
     low_side_index = 0;
     high_side_index = DAILY_ELEMENTS_OFFSET - 1;
+    setDoubleWrapperToDefault();
+}
+
+function defaultPollutionForecast(data, timezone) {
+    let j = POLLUTION_STARTING_INDEX;
+    for (let i = 0; i < POLLUTION_ELEMENTS_OFFSET; i++) {
+        setPollutionForecastElement(data, timezone, i, j);
+        previousTwoElementsAnimation(pollutionForecastElement, i);
+        j += 1;
+    }
+    low_side_index = POLLUTION_STARTING_INDEX;
+    high_side_index = POLLUTION_STARTING_INDEX + (POLLUTION_ELEMENTS_OFFSET - 1);
     setDoubleWrapperToDefault();
 }
 
@@ -744,6 +864,19 @@ function displayHourlyForecastElements() {
             }
             double_up_wrapper[0].querySelector(".fa-angle-double-up").removeEventListener("click", displayPreviousDailyElements);
             double_down_wrapper[0].querySelector(".fa-angle-double-down").removeEventListener("click", displayNextDailyElements);
+        }
+        if (lastOptionChosen === 2) {
+            let data = JSON.parse(window.sessionStorage.getItem("weatherPollutionContent"));
+            sideContentPollutionForecast[0].classList.add("side-content-info-pollution-forecast-closed");
+            sideContentPollutionForecast[0].classList.remove("side-content-info-pollution-forecast-open");
+            let j = POLLUTION_STARTING_INDEX;
+            for (let i = 0; i < POLLUTION_ELEMENTS_OFFSET; i++) {
+                setPollutionForecastElement(data, timezone, i, j);
+                removeTwoElementsAnimation(pollutionForecastElement, i);
+                j++;
+            }
+            double_up_wrapper[0].querySelector(".fa-angle-double-up").removeEventListener("click", displayPreviousPollutionElements);
+            double_down_wrapper[0].querySelector(".fa-angle-double-down").removeEventListener("click", displayNextPollutionElements);
         }
         low_side_index = 0;
         high_side_index = OFFSET_SIDE_INDEX - 1;
@@ -1041,6 +1174,19 @@ function displayDailyForecastElements() {
             double_up_wrapper[0].querySelector(".fa-angle-double-up").removeEventListener("click", displayPreviousHourlyElements);
             double_down_wrapper[0].querySelector(".fa-angle-double-down").removeEventListener("click", displayNextHourlyElements);
         }
+        if (lastOptionChosen === 2) {
+            let data = JSON.parse(window.sessionStorage.getItem("weatherPollutionContent"));
+            sideContentPollutionForecast[0].classList.add("side-content-info-pollution-forecast-closed");
+            sideContentPollutionForecast[0].classList.remove("side-content-info-pollution-forecast-open");
+            let j = POLLUTION_STARTING_INDEX;
+            for (let i = 0; i < POLLUTION_ELEMENTS_OFFSET; i++) {
+                setPollutionForecastElement(data, timezone, i, j);
+                removeTwoElementsAnimation(pollutionForecastElement, i);
+                j++;
+            }
+            double_up_wrapper[0].querySelector(".fa-angle-double-up").removeEventListener("click", displayPreviousPollutionElements);
+            double_down_wrapper[0].querySelector(".fa-angle-double-down").removeEventListener("click", displayNextPollutionElements);
+        }
         low_side_index = 0;
         high_side_index = DAILY_ELEMENTS_OFFSET - 1;
         double_up_wrapper[0].querySelector(".fa-angle-double-up").addEventListener("click", displayPreviousDailyElements);
@@ -1109,6 +1255,104 @@ function displayNextDailyElements() {
             }
             low_side_index = MAX_NUM_DAYS - DAILY_ELEMENTS_OFFSET;
             high_side_index = MAX_NUM_DAYS - 1;
+            double_down_wrapper[0].classList.add("disable-double");
+            double_down_wrapper[0].classList.remove("active-double");
+        }
+    }
+}
+
+function displayPollutionForecastElements() {
+    if (lastOptionChosen !== 2) {
+        let timezone = JSON.parse(window.sessionStorage.getItem("weatherData")).timezone;
+        let data = JSON.parse(window.sessionStorage.getItem("weatherSideContent"));
+        if (lastOptionChosen === 0) {
+            sideContentHourlyForecast[0].classList.add("side-content-info-hourly-forecast-closed");
+            sideContentHourlyForecast[0].classList.remove("side-content-info-hourly-forecast-open");
+            for (let i = 0; i < OFFSET_SIDE_INDEX; i++) {
+                setHourlyForecastElement(data, timezone, i, i);
+                removeThreeElementsAnimation(hourlyForecastElement, i);
+            }
+            double_up_wrapper[0].querySelector(".fa-angle-double-up").removeEventListener("click", displayPreviousHourlyElements);
+            double_down_wrapper[0].querySelector(".fa-angle-double-down").removeEventListener("click", displayNextHourlyElements);
+        }
+        if (lastOptionChosen === 1) {
+            sideContentDailyForecast[0].classList.add("side-content-info-daily-forecast-closed");
+            sideContentDailyForecast[0].classList.remove("side-content-info-daily-forecast-open");
+            for (let i = 0; i < DAILY_ELEMENTS_OFFSET; i++) {
+                setDailyForecastElement(data, timezone, i, i);
+                removeTwoElementsAnimation(dailyForecastElement, i);
+            }
+            double_up_wrapper[0].querySelector(".fa-angle-double-up").removeEventListener("click", displayPreviousDailyElements);
+            double_down_wrapper[0].querySelector(".fa-angle-double-down").removeEventListener("click", displayNextDailyElements);
+        }
+        low_side_index = POLLUTION_STARTING_INDEX;
+        high_side_index = POLLUTION_STARTING_INDEX + (POLLUTION_ELEMENTS_OFFSET - 1);
+        double_up_wrapper[0].querySelector(".fa-angle-double-up").addEventListener("click", displayPreviousPollutionElements);
+        double_down_wrapper[0].querySelector(".fa-angle-double-down").addEventListener("click", displayNextPollutionElements);
+        setDoubleWrapperToDefault();
+        sideContentPollutionForecast[0].classList.add("side-content-info-pollution-forecast-open");
+        sideContentPollutionForecast[0].classList.remove("side-content-info-pollution-forecast-closed");
+        if (lastOptionChosen === -1)
+            openSideContent();
+        lastOptionChosen = 2;
+    }
+}
+
+function displayPreviousPollutionElements() {
+    let state = JSON.parse(window.sessionStorage.getItem("weatherPollutionInfoState"));
+    if (state !== null && state.state && low_side_index > POLLUTION_STARTING_INDEX) {
+        let data = JSON.parse(window.sessionStorage.getItem("weatherPollutionContent"));
+        let timezone = JSON.parse(window.sessionStorage.getItem("weatherData")).timezone;
+        if (low_side_index - POLLUTION_ELEMENTS_OFFSET >= POLLUTION_STARTING_INDEX) {
+            for (let i = 0; i < POLLUTION_ELEMENTS_OFFSET; i++) {
+                setPollutionForecastElement(data, timezone, i, low_side_index - POLLUTION_ELEMENTS_OFFSET + i);
+                previousTwoElementsAnimation(pollutionForecastElement, i);
+            }
+            if (high_side_index === MAX_NUM_POLLUTION_HOURS - 1) {
+                double_down_wrapper[0].classList.add("active-double");
+                double_down_wrapper[0].classList.remove("disable-double");
+            }
+            low_side_index -= POLLUTION_ELEMENTS_OFFSET;
+            high_side_index -= POLLUTION_ELEMENTS_OFFSET;
+            if (low_side_index === POLLUTION_STARTING_INDEX) {
+                double_up_wrapper[0].classList.add("disable-double");
+                double_up_wrapper[0].classList.remove("active-double");
+            }
+        }
+        else
+            defaultPollutionForecast(data, timezone);
+    }
+}
+
+function displayNextPollutionElements() {
+    let state = JSON.parse(window.sessionStorage.getItem("weatherPollutionInfoState"));
+    if (state !== null && state.state && high_side_index < MAX_NUM_POLLUTION_HOURS - 1) {
+        let data = JSON.parse(window.sessionStorage.getItem("weatherPollutionContent"));
+        let timezone = JSON.parse(window.sessionStorage.getItem("weatherData")).timezone;
+        if (high_side_index + POLLUTION_ELEMENTS_OFFSET < MAX_NUM_POLLUTION_HOURS) {
+            for (let i = 1; i <= POLLUTION_ELEMENTS_OFFSET; i++) {
+                setPollutionForecastElement(data, timezone, i - 1, high_side_index + i);
+                nextTwoElementsAnimation(pollutionForecastElement, i - 1);
+            }
+            if (low_side_index === POLLUTION_STARTING_INDEX) {
+                double_up_wrapper[0].classList.add("active-double");
+                double_up_wrapper[0].classList.remove("disable-double");
+            }
+            low_side_index += POLLUTION_ELEMENTS_OFFSET;
+            high_side_index += POLLUTION_ELEMENTS_OFFSET;
+            if (high_side_index === MAX_NUM_POLLUTION_HOURS - 1) {
+                double_down_wrapper[0].classList.add("disable-double");
+                double_down_wrapper[0].classList.remove("active-double");
+            }
+        } else {
+            let j = POLLUTION_ELEMENTS_OFFSET - 1;
+            for (let i = MAX_NUM_POLLUTION_HOURS - 1; i >= MAX_NUM_POLLUTION_HOURS - POLLUTION_ELEMENTS_OFFSET; i--) {
+                setPollutionForecastElement(data, timezone, j, i);
+                nextTwoElementsAnimation(dailyForecastElement, j);
+                j--;
+            }
+            low_side_index = MAX_NUM_POLLUTION_HOURS - POLLUTION_ELEMENTS_OFFSET;
+            high_side_index = MAX_NUM_POLLUTION_HOURS - 1;
             double_down_wrapper[0].classList.add("disable-double");
             double_down_wrapper[0].classList.remove("active-double");
         }

@@ -17,7 +17,8 @@
     <div class="side-menu side-menu-closed">
         <span class="side-menu-item" onclick="displayHourlyForecastElements()">Hourly Forecast</span>
         <span class="side-menu-item" onclick="displayDailyForecastElements()">Daily Forecast</span>
-        <span class="side-menu-item side-menu-closing-item" onclick="closeSideContent()">Close Side Content</span>
+        <span class="side-menu-item" onclick="displayPollutionForecastElements()">Air Pollution</span>
+        <span class="side-menu-item" id="side-menu-closing-item" onclick="closeSideContent()">Close Side Content</span>
     </div>
     <div class="side-content side-content-close">
         <h1 class="angle-double-up-wrapper disable-double">
@@ -43,11 +44,11 @@
                 <div class="daily-forecast-element">
                     <h3 class="daily-forecast-date">Date</h3>
                     <div class="daily-forecast-sunrise">
-                        <span class="daily-forecast-placeholder">Sunrise</span>
+                        <h4 class="daily-forecast-placeholder">Sunrise</h4>
                         <h4 class="daily-forecast-value">N/A</h4>
                     </div>
                     <div class="daily-forecast-sunset">
-                        <span class="daily-forecast-placeholder">Sunset</span>
+                        <h4 class="daily-forecast-placeholder">Sunset</h4>
                         <h4 class="daily-forecast-value">N/A</h4>
                     </div>
                     <div class="daily-forecast-day-temp">
@@ -59,6 +60,47 @@
                         <span class="daily-forecast-value">N/A</span>
                     </div>
                     <img src="images/cloudy.svg" class="side-temperature-icon" alt="side weather icon">
+                </div>
+            </div>
+            <div class="side-content-info-pollution-forecast side-content-info-pollution-forecast-closed">
+                <div class="pollution-forecast-element">
+                    <h3 class="pollution-forecast-time">Time</h3>
+                    <div class="pollution-forecast-air-quality">
+                        <h4 class="pollution-forecast-placeholder">Air Quality</h4>
+                        <h4 class="pollution-forecast-value">N/A</h4>
+                    </div>
+                    <div class="pollution-forecast-CO">
+                        <span class="pollution-forecast-placeholder">CO</span>
+                        <span class="pollution-forecast-value">N/A</span>
+                    </div>
+                    <div class="pollution-forecast-NO">
+                        <span class="pollution-forecast-placeholder">NO</span>
+                        <span class="pollution-forecast-value">N/A</span>
+                    </div>
+                    <div class="pollution-forecast-NO-2">
+                        <span class="pollution-forecast-placeholder">NO2</span>
+                        <span class="pollution-forecast-value">N/A</span>
+                    </div>
+                    <div class="pollution-forecast-O-3">
+                        <span class="pollution-forecast-placeholder">O3</span>
+                        <span class="pollution-forecast-value">N/A</span>
+                    </div>
+                    <div class="pollution-forecast-SO-2">
+                        <span class="pollution-forecast-placeholder">SO2</span>
+                        <span class="pollution-forecast-value">N/A</span>
+                    </div>
+                    <div class="pollution-forecast-NH-3">
+                        <span class="pollution-forecast-placeholder">NH3</span>
+                        <span class="pollution-forecast-value">N/A</span>
+                    </div>
+                    <div class="pollution-forecast-PM-2-5">
+                        <span class="pollution-forecast-placeholder">PM2.5</span>
+                        <span class="pollution-forecast-value">N/A</span>
+                    </div>
+                    <div class="pollution-forecast-PM-10">
+                        <span class="pollution-forecast-placeholder">PM10</span>
+                        <span class="pollution-forecast-value">N/A</span>
+                    </div>
                 </div>
             </div>
         </div>
