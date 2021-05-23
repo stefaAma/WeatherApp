@@ -34,6 +34,7 @@ let sideContentDailyForecast = document.getElementsByClassName("side-content-inf
 let dailyForecastElement = document.getElementsByClassName("daily-forecast-element");
 let sideContentPollutionForecast = document.getElementsByClassName("side-content-info-pollution-forecast");
 let pollutionForecastElement = document.getElementsByClassName("pollution-forecast-element");
+let alert = document.getElementsByClassName("alert");
 
 let temperatureDegreeValue;
 let maxTemperatureValue;
@@ -100,7 +101,9 @@ function failureHandlerPollutionContent(jqXHR) {
 }
 
 function successHandlerSideContent(data) {
-    //console.log(data);
+
+    console.log(data);
+
     window.sessionStorage.setItem("weatherSideContent", JSON.stringify(data));
     window.sessionStorage.setItem("weatherSideInfoState", JSON.stringify({state: true}));
     let timezone = JSON.parse(window.sessionStorage.getItem("weatherData")).timezone;
@@ -659,11 +662,13 @@ function openSideMenu() {
     sideMenu[0].classList.toggle("side-menu-closed");
     if (sideMenu[0].classList.contains("side-menu-open")) {
         hamburgerBtn[0].classList.add("hamburger-btn-open");
-        hamburgerBtn[0].classList.remove("hamburger-btn-closed")
+        hamburgerBtn[0].classList.remove("hamburger-btn-closed");
+        alert[0].style.animation = "fade-out-alert 1.5s";
     }
     else {
         hamburgerBtn[0].classList.add("hamburger-btn-closed");
         hamburgerBtn[0].classList.remove("hamburger-btn-open");
+        alert[0].style.animation = "fade-in-alert 1.5s";
     }
 }
 
@@ -1357,4 +1362,34 @@ function displayNextPollutionElements() {
             double_down_wrapper[0].classList.remove("active-double");
         }
     }
+}
+
+function openModal() {
+    let state = JSON.parse(window.sessionStorage.getItem("weatherSideInfoState"));
+    let data = JSON.parse(window.sessionStorage.getItem("weatherSideContent"));
+    let overlay = document.getElementsByClassName("overlay")[0];
+    let modal = document.getElementsByClassName("modal")[0];
+    if (state != null && state.state && data.alerts !== undefined && data.alerts !== null) {
+        document.getElementsByClassName("modal-header")[0].getElementsByTagName("H2")[0].innerHtml = data.alerts[0].event;
+        let timezone = JSON.parse(window.sessionStorage.getItem("weatherData")).timezone;
+        let date = calculateSideDate(data.alerts[0].start, timezone);
+        document.getElementsByClassName("modal-date-start-value")[0].innerHTML = date.year + "/" + date.fixedMonths + "/" + date.fixedDays + " Time " + date.fixedHours + ":" + date.fixedMinutes;
+        date = calculateSideDate(data.alerts[0].end, timezone);
+        document.getElementsByClassName("modal-date-end-value")[0].innerHTML = date.year + "/" + date.fixedMonths + "/" + date.fixedDays + " Time " + date.fixedHours + ":" + date.fixedMinutes;
+        document.getElementsByClassName("modal-description")[0].innerHTML = data.alerts[0].description;
+        document.getElementsByClassName("modal-source-value")[0].innerHTML = data.alerts[0].sender_name;
+    }
+    overlay.classList.add("overlay-enabled");
+    overlay.classList.remove("overlay-disabled");
+    modal.classList.add("modal-open");
+    modal.classList.remove("modal-closed");
+}
+
+function closeModal() {
+    let overlay = document.getElementsByClassName("overlay")[0];
+    let modal = document.getElementsByClassName("modal")[0];
+    overlay.classList.add("overlay-disabled");
+    overlay.classList.remove("overlay-enabled");
+    modal.classList.add("modal-closed");
+    modal.classList.remove("modal-open");
 }

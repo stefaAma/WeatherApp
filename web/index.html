@@ -14,6 +14,30 @@
     <div class="wrap-loader">
         <div class="loader"></div>
     </div>
+    <div class="overlay overlay-disabled" onclick="closeModal()"></div>
+    <div class="modal modal-closed">
+        <div class="modal-header">
+            <h2>No weather alerts</h2>
+        </div>
+        <div class="modal-content">
+            <div class="modal-date-start">
+                <span class="modal-date-start-placeholder">Start date of the weather alert:</span>
+                <span class="modal-date-start-value">N/A</span>
+            </div>
+            <div class="modal-date-end">
+                <span class="modal-date-end-placeholder">End  date of the weather alert:</span>
+                <span class="modal-date-end-value">N/A</span>
+            </div>
+            <hr id="modal-content-separator">
+            <div class="modal-description-wrapper">
+                <p class="modal-description">A description is currently not available...</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <span class="modal-source-placeholder">Source:</span>
+            <span class="modal-source-value">N/A</span>
+        </div>
+    </div>
     <div class="side-menu side-menu-closed">
         <span class="side-menu-item" onclick="displayHourlyForecastElements()">Hourly Forecast</span>
         <span class="side-menu-item" onclick="displayDailyForecastElements()">Daily Forecast</span>
@@ -111,6 +135,10 @@
     <div class="content">
         <div class="hamburger-btn hamburger-btn-closed" onclick="openSideMenu()">
             <div class="hamburger"></div>
+        </div>
+        <div class="alert" onclick="openModal()">
+            <i class="fa fa-bell"></i>
+            <span class="alert-text">Alert</span>
         </div>
         <div class="location">
             <h1 class="location-zone">Timezone</h1>
