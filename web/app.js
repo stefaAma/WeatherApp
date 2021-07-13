@@ -20,6 +20,7 @@ let sunrise = document.getElementsByClassName("temperature-info-sunrise");
 let sunset = document.getElementsByClassName("temperature-info-sunset");
 let icon = document.getElementsByClassName("temperature-icon");
 let searchBar = document.getElementById("search-city");
+let searchLabel = document.getElementsByClassName("search-label");
 let searchButton = document.getElementsByClassName("search-confirm");
 let content = document.getElementsByClassName("content");
 let wrapLoader = document.getElementsByClassName("wrap-loader");
@@ -613,6 +614,8 @@ function searchCity() {
 function trueState() {
     searchBar.classList.add("search-city-true-state");
     searchBar.classList.remove("search-city-false-state");
+    searchLabel[0].classList.add("search-label-true-state");
+    searchLabel[0].classList.remove("search-label-false-state");
     searchButton[0].classList.add("search-confirm-true-state");
     searchButton[0].classList.remove("search-confirm-false-state");
     locationDate[0].querySelector(".fa-refresh").classList.add("fa-refresh-true-state");
@@ -628,9 +631,10 @@ function trueState() {
 
 function falseState() {
     window.sessionStorage.setItem("weatherAppState", JSON.stringify({state: false}));
+    document.querySelector("body").style.background = "linear-gradient(to bottom, #e52d27, #b31217)";
     locationZone[0].innerHTML = "N/A City";
     locationDate[0].querySelector("span").innerHTML = "N/A Date";
-    temperatureDegree[0].innerHTML = "N/A Temperature";
+    temperatureDegree[0].innerHTML = "N/A Temp.";
     maxTemperature[0].querySelector(".temperature-info-value").innerHTML = "N/A";
     minTemperature[0].querySelector(".temperature-info-value").innerHTML = "N/A";
     humidity[0].querySelector(".temperature-info-value").innerHTML = "N/A";
@@ -640,6 +644,8 @@ function falseState() {
     icon[0].src = "images/weather_sunset.svg";
     searchBar.classList.add("search-city-false-state");
     searchBar.classList.remove("search-city-true-state");
+    searchLabel[0].classList.add("search-label-false-state");
+    searchLabel[0].classList.remove("search-label-true-state");
     searchButton[0].classList.add("search-confirm-false-state");
     searchButton[0].classList.remove("search-confirm-true-state");
     locationDate[0].querySelector(".fa-refresh").classList.add("fa-refresh-false-state");

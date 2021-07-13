@@ -5,7 +5,7 @@
 }
 
 body {
-    background: linear-gradient(to bottom right, #08f995, #126ce8);
+    background: linear-gradient(to bottom, #1A2980, #26D0CE);
     color: whitesmoke;
     font-family: sans-serif;
 }
@@ -47,7 +47,7 @@ body {
     width: 60vh;
     z-index: 3;
     flex-direction: column;
-    animation: modal-fade-in 1s;
+    animation: modal-fade-in 0.25s;
 }
 
 @keyframes modal-fade-in {
@@ -139,11 +139,17 @@ body {
     display: flex;
     align-items: center;
     background-color: #ff471a;
+    z-index: 1;
+    font-style: italic;
 }
 
 #modal-content-separator {
     color: #ff471a;
     margin: 2vh;
+}
+
+.modal-header, .modal-footer {
+    border: 1px solid whitesmoke;
 }
 
 .wrap-loader {
@@ -152,6 +158,7 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 2;
+    background-color: transparent;
 }
 
 .loader {
@@ -207,12 +214,14 @@ body {
 
 .location {
     display: flex;
-    margin: 5vh 5vw;
+    margin-top: 5.5vh;
+    margin-left: 5vw;
+    margin-right: 5vw;
     flex-direction: column;
 }
 
 .location-zone {
-    text-shadow: 2px 10px rgba(0, 0, 0, 0.6);
+    text-shadow: 2px 10px 10px rgba(0, 0, 0, 0.4);
     font-size: 10vh;
     margin-bottom: 5vh;
     letter-spacing: 2vh;
@@ -221,43 +230,43 @@ body {
 .location-date {
     font-size: 5vh;
     transition: text-shadow 0.5s ease;
+    align-self: center;
 }
 
-.location-date:hover {
+/*.location-date:hover {
     text-shadow: 2px 5px rgba(0, 0, 0, 0.6);
-}
+}*/
 
 .temperature {
     display: flex;
-    margin: 5vh 5vh;
+    flex-direction: column;
+    align-items: center;
+    margin: 2.5vh 2.5vh;
 }
 
-.vertical-line {
+/*.vertical-line {
     border: 1px solid whitesmoke;
     height: 30vh;
     order: 2;
     position: relative;
-}
+}*/
 
 .temperature-main-info {
     order: 1;
     display: flex;
-    flex-direction: column;
     justify-content: center;
+    align-items: center;
 }
 
 .temperature-degree {
-    position: relative;
-    align-self: center;
-    margin-bottom: 2.5vh;
-    font-size: 7.5vh;
-    right: 20%;
+    font-size: 10vh;
+    margin-left: 5vh;
     transition: text-shadow 0.5s ease;
 }
 
-.temperature-degree:hover {
+/*.temperature-degree:hover {
     text-shadow: 2px 10px rgba(0, 0, 0, 0.6);
-}
+}*/
 
 .temperature-degree-true-state {
     cursor: pointer;
@@ -269,12 +278,8 @@ body {
 
 .temperature-icon {
     order: 1;
-    position: relative;
-    align-self: center;
-    margin-top: 0.5vh;
-    right: 20%;
-    width: 20vh;
-    height: 20vh;
+    width: 22.5vh;
+    height: 22.5vh;
     transition: 0.5s;
 }
 
@@ -290,21 +295,17 @@ body {
             "min wind sunset";
     align-items: center;
     column-gap: 2vh;
-    position: relative;
     font-size: 2.5vh;
     text-align: center;
-    left: 10%;
     padding: 1.5vh;
-    border: 2px solid whitesmoke;
-    border-radius: 5px;
-    transition: 0.5s;
+    border: 3px solid whitesmoke;
+    border-radius: 15px;
+    transition: 0.25s;
 }
 
 .temperature-info:hover {
-    box-shadow: 2px 15px 15px -5px rgba(0,0,0,0.6);
-    background: linear-gradient(to top left, #08f995, #126ce8);
-    height: 40vh;
-    width: 55vh;
+    box-shadow: 2px 15px 15px -5px rgba(0,0,0,0.4),
+                -2px -7.5px 15px -5px rgba(0,0,0,0.4);
 }
 
 .temperature-info-max {
@@ -423,9 +424,9 @@ body {
 
 .search {
     display: flex;
+    margin-top: 2.5vh;
     height: 7.5vh;
     align-items: center;
-    margin-top: 5vh;
     width: 120vh;
 }
 
@@ -436,42 +437,69 @@ body {
     padding: 2vh 2vh;
     border-radius: 20px;
     outline: none;
-    background-color: rgba(255, 255, 255, 0.3);
-    color: whitesmoke;
     font-size: 2.5vh;
     transition: 0.5s linear;
-}
-
-#search-city::placeholder {
-    color: whitesmoke;
-}
-
-#search-city:focus {
-    background-color: rgba(255, 255, 255, 0.6);
-    color: #313131;
-    box-shadow: 0 10px 10px -5px rgba(0,0,0,0.6);
-}
-
-#search-city:focus::placeholder {
-    color: #313131;
+    border-top: none;
+    border-left: none;
+    border-right: none;
 }
 
 .search-city-true-state {
-    border: none;
-    border-bottom: 3px solid #7D3C98;
+    border-bottom: 3px solid #1A2480;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.search-city-true-state::placeholder {
+    color: #1A2480;
+    transition: 0.5s;
+}
+
+.search-city-true-state:focus {
+    background-color: rgba(26, 36, 128, 0.7);
+    box-shadow: 0 10px 10px -5px rgba(0,0,0,0.5);
+    border-bottom: 3px solid #26D0CE;
+    color: #26D0CE;
+}
+
+.search-city-true-state:focus::placeholder {
+    color: #26D0CE;
 }
 
 .search-city-false-state {
-    border: none;
-    border-bottom: 3px solid darkred;
-    box-shadow: 0 0 2px 0 #FFFFFF,
+    background-color: rgba(255, 255, 255, 0.3);
+    border-bottom: 3px solid whitesmoke;
+    box-shadow: 0 0 3px 0 whitesmoke,
                 0 0 5px 0 #ff9999,
                 0 0 10px 0 #e60000;
+}
+
+.search-city-false-state::placeholder {
+    color: whitesmoke;
+    transition: 0.5s;
+}
+
+.search-city-false-state:focus {
+    background-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 10px 10px -5px rgba(0,0,0,0.5);
+    border-bottom: 3px solid darkred;
+    color: darkred;
+}
+
+.search-city-false-state:focus::placeholder {
+    color: darkred;
 }
 
 .search-label {
     font-size: 2.5vh;
     cursor: pointer;
+}
+
+.search-label-true-state {
+    color: #1A2480;
+}
+
+.search-label-false-state {
+    color: whitesmoke;
 }
 
 .search-confirm {
@@ -480,33 +508,49 @@ body {
     background-color: rgba(255, 255, 255, 0.3);
     outline: none;
     border-radius: 50%;
-    color: whitesmoke;
-    transition: 0.5s ease;
+    transition: 0.25s ease;
 }
 
 .search-confirm:hover {
-    box-shadow: 2px 5px 5px rgba(0,0,0,0.6);
+    box-shadow: 2px 5px 5px rgba(0,0,0,0.5);
 }
 
 .search-confirm:active {
     box-shadow: inset 0 5px 5px rgba(0, 0, 0, 0.3);
-    background-color: rgba(255, 255, 255, 0.6);
-    color: #313131;
 }
 
 .search-confirm-true-state {
-    border: 3px solid #7D3C98;
+    color:  #1A2480;
+    border: 3px solid #1A2480;
+}
+
+.search-confirm-true-state:active {
+    background-color: rgba(255, 255, 255, 0.7);
+    /* color: #26D0CE; */
+    /* border: 3px solid #26D0CE; */
 }
 
 .search-confirm-false-state {
     border: 3px solid darkred;
+    color: darkred;
     box-shadow: 0 0 2px 0 #FFFFFF,
                 0 0 5px 0 #ff9999,
                 0 0 10px 0 #e60000;
 }
 
+.search-confirm-false-state:active {
+    background-color: rgba(169, 0, 0, 0.7);
+    color: whitesmoke;
+    border: 3px solid whitesmoke;
+}
+
 .fa-refresh {
     size: 2.5vh;
+    transition: 0.5s;
+}
+
+.fa-refresh:hover {
+    text-shadow: 2px 5px 5px rgba(0, 0, 0, 0.5);
 }
 
 .fa-refresh-true-state {
