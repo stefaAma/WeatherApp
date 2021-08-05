@@ -39,10 +39,12 @@
         </div>
     </div>
     <div class="side-menu side-menu-closed">
-        <span class="side-menu-item" onclick="displayHourlyForecastElements()">Hourly Forecast</span>
-        <span class="side-menu-item" onclick="displayDailyForecastElements()">Daily Forecast</span>
-        <span class="side-menu-item" onclick="displayPollutionForecastElements()">Air Pollution</span>
-        <span class="side-menu-item" id="side-menu-closing-item" onclick="closeSideContent()">Close Side Content</span>
+        <div id="menu-item-wrapper" class="menu-item-wrapper-closed">
+            <span class="side-menu-item" onclick="displayHourlyForecastElements()">Hourly Forecast</span>
+            <span class="side-menu-item" onclick="displayDailyForecastElements()">Daily Forecast</span>
+            <span class="side-menu-item" onclick="displayPollutionForecastElements()">Air Pollution</span>
+            <span class="side-menu-item" id="side-menu-closing-item" onclick="closeSideContent()">Close Side Content</span>
+        </div>
     </div>
     <div class="side-content side-content-close">
         <h1 class="angle-double-up-wrapper disable-double">

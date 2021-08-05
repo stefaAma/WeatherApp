@@ -36,6 +36,7 @@ let dailyForecastElement = document.getElementsByClassName("daily-forecast-eleme
 let sideContentPollutionForecast = document.getElementsByClassName("side-content-info-pollution-forecast");
 let pollutionForecastElement = document.getElementsByClassName("pollution-forecast-element");
 let alert = document.getElementsByClassName("alert");
+let menuItemWrapper = document.getElementById("menu-item-wrapper");
 
 let temperatureDegreeValue;
 let maxTemperatureValue;
@@ -687,11 +688,15 @@ function openSideMenu() {
         hamburgerBtn[0].classList.add("hamburger-btn-open");
         hamburgerBtn[0].classList.remove("hamburger-btn-closed");
         alert[0].style.animation = "fade-out-alert 1.5s";
+        menuItemWrapper.classList.remove("menu-item-wrapper-closed");
+        menuItemWrapper.classList.add("menu-item-wrapper-open");
     }
     else {
         hamburgerBtn[0].classList.add("hamburger-btn-closed");
         hamburgerBtn[0].classList.remove("hamburger-btn-open");
         alert[0].style.animation = "fade-in-alert 1.5s";
+        menuItemWrapper.classList.remove("menu-item-wrapper-open");
+        menuItemWrapper.classList.add("menu-item-wrapper-closed");
     }
 }
 
